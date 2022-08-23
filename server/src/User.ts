@@ -70,7 +70,7 @@ export class UserDataSource {
         password: string,
         hash: string
     ): Promise<boolean> {
-        return await bcrypt.compare(password, hash);
+        return await bcrypt.compare(hash, hash);
     }
 
     static async add(data: AddUserParams) {
