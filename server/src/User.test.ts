@@ -151,6 +151,48 @@ describe("User - add", () => {
         ).rejects.toThrow('"confirmPassword" must be [ref:password]');
     });
 
+    test("throws if dob is missing", async () => {
+        await expect(
+            UserDataSource.add({
+                email: TestEmail,
+                dob: undefined,
+                first_name: "first",
+                last_name: "last",
+                password: "",
+                confirmPassword: "password",
+                phone: "1234567890",
+            })
+        ).rejects.toThrow('"dob" is required');
+    });
+
+    test("throws if phone is empty", async () => {
+        await expect(
+            UserDataSource.add({
+                email: TestEmail,
+                dob: new Date(),
+                first_name: "first",
+                last_name: "last",
+                password: "",
+                confirmPassword: "password",
+                phone: "",
+            })
+        ).rejects.toThrow('"phone" is not allowed to be empty');
+    });
+
+    test("throws if phone is missing", async () => {
+        await expect(
+            UserDataSource.add({
+                email: TestEmail,
+                dob: new Date(),
+                first_name: "first",
+                last_name: "last",
+                password: "",
+                confirmPassword: "password",
+                phone: undefined,
+            })
+        ).rejects.toThrow('"phone" is required');
+    });
+
     test("valid input results in User", async () => {
         const result = await UserDataSource.add({
             email: TestEmail,

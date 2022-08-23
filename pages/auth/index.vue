@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { LoginUserParams } from '~~/server/src/User';
+
 const email = ref("");
 const password = ref("");
 
@@ -14,11 +16,15 @@ async function login() {
         body: {
             email: email.value,
             password: password.value,
-        }
+        } as LoginUserParams
     });
 
     if (value.error) {
         error_message.value = value.error;
+    }
+
+    if(value.response === "OK"){
+        useRouter().push('/');
     }
 
     button_enabled.value = true;
