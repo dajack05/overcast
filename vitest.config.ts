@@ -4,7 +4,7 @@ export default defineConfig({
     test:{
         include:[
             './store/*.test.ts',
-            './src/*.test.ts',
+            './server/src/*.test.ts',
             './middleware/*.test.ts',
         ],
         coverage:{
