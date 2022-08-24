@@ -15,7 +15,7 @@ const TestEmail = "test@test.com";
 describe("HashPassword", () => {
     test("it hashes an input", async () => {
         const hash = await UserDataSource.HashPassword("test");
-        expect(hash).toMatch("$2b$10");
+        expect(hash).toMatch("$2a$10");
     });
 });
 
@@ -316,7 +316,6 @@ describe("User - Login", () => {
 
         expect(token).toStrictEqual({
             token: expect.any(String),
-            ttl_minutes: expect.any(Number),
         });
     })
 });

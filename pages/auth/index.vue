@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { LoginUserParams } from '~~/server/src/User';
+import { useAuthStore } from '~~/store/useAuth';
+
+const authStore = useAuthStore();
 
 const email = ref("");
 const password = ref("");
@@ -11,19 +13,11 @@ async function login() {
     button_enabled.value = false;
     error_message.value = "";
 
-    const value = await $fetch('/api/login', {
-        method: "POST",
-        body: {
-            email: email.value,
-            password: password.value,
-        } as LoginUserParams
-    });
+    const error = await authStore.login(email.value, password.value);
 
-    if (value.error) {
-        error_message.value = value.error;
-    }
-
-    if(value.response === "OK"){
+    if (error) {
+        error_message.value = error;
+    } else {
         useRouter().push('/');
     }
 
@@ -33,6 +27,9 @@ async function login() {
 
 <template>
     <div class="w-full h-screen bg-slate-200 flex flex-col justify-center items-center">
+        <div>
+            {{ authStore.token }}
+        </div>
         <form @submit.prevent class="p-4 rounded bg-slate-100 shadow w-1/2 min-w-[400px] flex flex-col gap-2">
             <h1 class="text-4xl">Login</h1>
             <hr />
@@ -44,7 +41,8 @@ async function login() {
             }" class="shadow rounded transition-all px-4 py-2 ">
                 Login
             </button>
-            <p v-if="error_message" class="bg-red-50 p-2 border rounded text-center border-red-200 text-red-500 font-extrabold">
+            <p v-if="error_message"
+                class="bg-red-50 p-2 border rounded text-center border-red-200 text-red-500 font-extrabold">
                 {{ error_message }}
             </p>
             <NuxtLink class="underline" to="/auth/register">Register</NuxtLink>

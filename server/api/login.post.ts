@@ -8,7 +8,7 @@ export default defineEventHandler(async (evt): Promise<ReturnType> => {
     try {
         const token = await UserDataSource.login({ email, password });
         if (token) {
-            setCookie(evt, COOKIE_NAME, JSON.stringify(token));
+            setCookie(evt, COOKIE_NAME, token.token);
             console.log(token);
             return { response: "OK" };
         }
