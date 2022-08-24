@@ -6,9 +6,10 @@ export default defineEventHandler(async (evt): Promise<ReturnType> => {
     const body = await useBody(evt);
     const { email, password } = body;
     try {
-        const user = await UserDataSource.login({ email, password });
-        if (user) {
-            setCookie(evt, COOKIE_NAME, JSON.stringify(user));
+        const token = await UserDataSource.login({ email, password });
+        if (token) {
+            setCookie(evt, COOKIE_NAME, JSON.stringify(token));
+            console.log(token);
             return { response: "OK" };
         }
         return { error: "Incorrect Email or Password." };

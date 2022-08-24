@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { COOKIE_NAME } from '~~/Globals';
-import { LoginToken } from '~~/server/src/User';
+import { LoginToken, UserDataSource } from '~~/server/src/User';
 
-const user = useCookie<LoginToken>(COOKIE_NAME);
+const token = useCookie<LoginToken>(COOKIE_NAME);
+const user = computed(() => UserDataSource.ValidateToken(token.value))
 
 async function logout() {
-    user.value = null;
+    token.value = null;
     useRouter().push('/auth');
 }
 </script>

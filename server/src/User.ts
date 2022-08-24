@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import Joi from "joi";
 import bcrypt from "bcrypt";
-import { joinKeys } from "unstorage";
+import Jwt from 'jsonwebtoken';
 
 export interface User {
     id: number;
@@ -51,12 +51,17 @@ const LoginUserSchema = Joi.object({
     password: Joi.string().required(),
 });
 
-export interface LoginToken {
+export interface UserInfo {
     email: string;
     phone: string;
     first_name: string;
     last_name: string;
     dob: Date;
+}
+
+export interface LoginToken {
+    token: string,
+    ttl_minutes: number,
 }
 
 const client = new PrismaClient();
@@ -71,6 +76,41 @@ export class UserDataSource {
         hash: string
     ): Promise<boolean> {
         return await bcrypt.compare(password, hash);
+    }
+
+    static UserAsUserInfo(user: User): UserInfo {
+        return {
+            dob: user.dob,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            phone: user.phone,
+        };
+    }
+
+    static GenerateToken(user: User): LoginToken {
+
+        const token = Jwt.sign({
+            ...user,
+        } as UserInfo, process.env.JWT_KEY);
+
+        return {
+            token,
+            ttl_minutes: 1,
+        }
+    }
+
+    static ValidateToken(token: LoginToken): UserInfo | undefined {
+        console.log(token);
+        const result = Jwt.verify(token.token, process.env.JWT_KEY);
+        if (typeof (result) === 'string') {
+            console.log(result);
+            return;
+        }
+
+        console.log(result);
+
+        return undefined;
     }
 
     static async add(data: AddUserParams) {
@@ -109,12 +149,8 @@ export class UserDataSource {
         if (!await UserDataSource.ValidatePassword(params.password, user.password)) {
             return undefined;
         }
-        return {
-            first_name: user.first_name,
-            last_name: user.last_name,
-            dob: user.dob,
-            email: user.email,
-            phone: user.phone,
-        };
+
+        const token = UserDataSource.GenerateToken(user);
+        return token;
     }
 }

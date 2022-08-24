@@ -297,7 +297,7 @@ describe("User - Login", () => {
         expect(user).toBeUndefined();
     });
 
-    test("correct email and password returns UserToken", async () => {
+    test("correct email and password returns LoginToken", async () => {
         // First add test user
         const added_user = await UserDataSource.add({
             email: TestEmail,
@@ -309,17 +309,14 @@ describe("User - Login", () => {
             phone: "1234567890",
         });
 
-        const user = await UserDataSource.login({
+        const token = await UserDataSource.login({
             email: TestEmail,
             password: "password",
         });
 
-        expect(user).toStrictEqual({
-            first_name: added_user.first_name,
-            last_name: added_user.last_name,
-            dob: added_user.dob,
-            email: added_user.email,
-            phone: added_user.phone,
+        expect(token).toStrictEqual({
+            token: expect.any(String),
+            ttl_minutes: expect.any(Number),
         });
     })
 });
