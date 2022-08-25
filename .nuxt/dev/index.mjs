@@ -6,10 +6,10 @@ import { mkdirSync } from 'fs';
 import { parentPort, threadId } from 'worker_threads';
 import { provider, isWindows } from 'file:///Users/danieljackson/git/overcast/node_modules/std-env/dist/index.mjs';
 import { eventHandler, defineEventHandler, handleCacheHeaders, createEvent, deleteCookie, createApp, createRouter, lazyEventHandler, useBody, setCookie, getQuery } from 'file:///Users/danieljackson/git/overcast/node_modules/h3/dist/index.mjs';
-import { PrismaClient } from 'file:///Users/danieljackson/git/overcast/node_modules/@prisma/client/index.js';
 import Joi from 'file:///Users/danieljackson/git/overcast/node_modules/joi/lib/index.js';
 import bcrypt from 'file:///Users/danieljackson/git/overcast/node_modules/bcryptjs/index.js';
 import Jwt from 'file:///Users/danieljackson/git/overcast/node_modules/jsonwebtoken/index.js';
+import { PrismaClient } from 'file:///Users/danieljackson/git/overcast/node_modules/@prisma/client/index.js';
 import { createRenderer } from 'file:///Users/danieljackson/git/overcast/node_modules/vue-bundle-renderer/dist/runtime.mjs';
 import devalue from 'file:///Users/danieljackson/git/overcast/node_modules/@nuxt/devalue/dist/devalue.mjs';
 import { renderToString } from 'file:///Users/danieljackson/git/overcast/node_modules/vue/server-renderer/index.mjs';
@@ -377,7 +377,7 @@ const _w4Bw8o = defineEventHandler(async (event) => {
     } catch (error) {
       event.context.error = error;
       deleteCookie(event, COOKIE_NAME);
-      event.res.writeHead(301, { location: "/" });
+      event.res.writeHead(301, { "Location": "/" });
       event.res.end();
     }
   }
@@ -474,7 +474,7 @@ let prisma;
 if (!prisma) {
   prisma = new PrismaClient();
 }
-const client = prisma;
+const prisma$1 = prisma;
 
 const AddUserSchema = Joi.object({
   dob: Joi.date().required(),
@@ -510,7 +510,7 @@ class UserDataSource {
   }
   static GenerateToken(user) {
     const token = Jwt.sign({ id: user.id }, process.env.JWT_KEY, {
-      expiresIn: `1m`
+      expiresIn: `10s`
     });
     return {
       token
@@ -528,7 +528,7 @@ class UserDataSource {
   }
   static async add(data) {
     const params = await AddUserSchema.validateAsync(data);
-    const result = await client.user.create({
+    const result = await prisma$1.user.create({
       data: {
         dob: params.dob,
         email: params.email,
@@ -542,7 +542,7 @@ class UserDataSource {
   }
   static async delete(data) {
     const params = await DeleteUserSchema.validateAsync(data);
-    await client.user.delete({
+    await prisma$1.user.delete({
       where: {
         email: params.email
       }
@@ -551,7 +551,7 @@ class UserDataSource {
   }
   static async login(data) {
     const params = await LoginUserSchema.validateAsync(data);
-    const user = await client.user.findUnique({
+    const user = await prisma$1.user.findUnique({
       where: { email: params.email }
     });
     if (!user) {
@@ -567,9 +567,12 @@ class UserDataSource {
 
 const me_post = defineEventHandler(async (evt) => {
   const id = evt.context.auth.id;
-  const client = new PrismaClient();
-  const user = await client.user.findUnique({ where: { id } });
-  await client.$disconnect();
+  if (id == void 0) {
+    return {
+      error: "Missing Token"
+    };
+  }
+  const user = await prisma$1.user.findUnique({ where: { id } });
   const safe_user = UserDataSource.UserAsUserInfo(user);
   return {
     response: safe_user

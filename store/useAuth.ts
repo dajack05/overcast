@@ -1,4 +1,5 @@
 import { COOKIE_NAME } from "~~/Globals";
+import auth from "~~/server/middleware/auth";
 import { UserInfo } from "~~/server/src/User";
 
 export const useAuthStore = defineStore("auth", {
@@ -21,10 +22,10 @@ export const useAuthStore = defineStore("auth", {
         });
 
         if(user.error){
+            this.logout();
             return user.error;
         }
 
-        console.log(user.response);
         this.user = user.response as UserInfo;
     },
 
@@ -46,6 +47,7 @@ export const useAuthStore = defineStore("auth", {
         this.user = undefined;
         this.token = undefined;
         useCookie(COOKIE_NAME).value = undefined;
+        useRouter().push('/');
     },
   },
 });

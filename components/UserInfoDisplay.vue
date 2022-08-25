@@ -16,7 +16,7 @@ function yearsOld():number{
 </script>
 
 <template>
-<div class="p2 rounded shadow bg-slate-100">
+<div class="w-full p-4 rounded shadow bg-slate-100">
     <table>
         <tr>
             <th>Name:</th>

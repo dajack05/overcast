@@ -5,12 +5,17 @@ import { useAuthStore } from '~~/store/useAuth';
 const auth = useAuthStore();
 
 onBeforeMount(async () => {
-    await auth.fetchUser();
-})
+    const cookie = useCookie(COOKIE_NAME);
+    if (cookie.value && cookie.value.length > 0) {
+        const error = await auth.fetchUser();
+        if (error) {
+            console.error(error);
+        }
+    }
+});
 
 async function logout() {
     auth.logout();
-    useRouter().push('/auth');
 }
 </script>
 

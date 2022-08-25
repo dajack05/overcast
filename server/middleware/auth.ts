@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     } catch (error) {
       event.context.error = error;
       deleteCookie(event, COOKIE_NAME);
-      event.res.writeHead(301,{location:"/"});
+      event.res.writeHead(301, {'Location':"/"});
       event.res.end();
     }
   }
