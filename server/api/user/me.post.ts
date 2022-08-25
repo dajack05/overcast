@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { ReturnType } from "@/src/ReturnType";
 import { UserDataSource } from "~~/server/src/User";
 import prisma from "~~/server/src/Prisma";

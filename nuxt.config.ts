@@ -4,6 +4,7 @@ import { defineNuxtConfig } from "nuxt";
 export default defineNuxtConfig({
   css: ["~/assets/css/tailwind.css"],
   modules: [
+    './modules/startup',
     [
       "@pinia/nuxt",
       {
@@ -16,6 +17,9 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  nitro:{
+    // entry:"src/index.ts",
+  },
   build: {
     postcss: {
       postcssOptions: {
