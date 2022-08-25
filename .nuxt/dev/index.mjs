@@ -366,19 +366,26 @@ const errorHandler = (async function errorhandler(error, event) {
 const COOKIE_NAME = "ovc-cookie";
 
 const _w4Bw8o = defineEventHandler(async (event) => {
+  console.log("Starting Auth Middleware");
   if (event.req.headers.authentication) {
+    console.log("Has auth header");
     try {
-      event.context.auth = {
-        id: Jwt.verify(
-          event.req.headers.authentication,
-          process.env.JWT_KEY
-        ).id
-      };
+      const payload = Jwt.verify(
+        event.req.headers.authentication,
+        process.env.JWT_KEY
+      );
+      console.log(`payload`, payload);
+      if (typeof payload !== "string") {
+        event.context.auth = {
+          id: payload.id
+        };
+      }
     } catch (error) {
-      event.context.error = error;
-      deleteCookie(event, COOKIE_NAME);
-      event.res.writeHead(301, { "Location": "/" });
-      event.res.end();
+      if (error instanceof Jwt.TokenExpiredError) {
+        event.context.error = error.message;
+        event.context.auth = { id: void 0 };
+        deleteCookie(event, COOKIE_NAME);
+      }
     }
   }
 });
@@ -566,12 +573,18 @@ class UserDataSource {
 }
 
 const me_post = defineEventHandler(async (evt) => {
-  const id = evt.context.auth.id;
-  if (id == void 0) {
+  console.log("Got Here!");
+  if (evt.context.auth.id === void 0) {
+    if (evt.context.error) {
+      return {
+        error: evt.context.error
+      };
+    }
     return {
       error: "Missing Token"
     };
   }
+  const id = evt.context.auth.id;
   const user = await prisma$1.user.findUnique({ where: { id } });
   const safe_user = UserDataSource.UserAsUserInfo(user);
   return {
