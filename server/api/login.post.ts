@@ -9,7 +9,6 @@ export default defineEventHandler(async (evt): Promise<ReturnType> => {
         const token = await UserDataSource.login({ email, password });
         if (token) {
             setCookie(evt, COOKIE_NAME, token.token);
-            console.log(token);
             return { response: "OK" };
         }
         return { error: "Incorrect Email or Password." };

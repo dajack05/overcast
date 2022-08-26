@@ -1,8 +1,14 @@
 import Jwt from "jsonwebtoken";
 import { COOKIE_NAME } from "~~/Globals";
 
+/*
+For Testing:
+
+- Should always set context.auth
+*/
+
 export default defineEventHandler(async (event) => {
-  console.log("Starting Auth Middleware");
+  event.context.auth = {};
   if (event.req.headers.authentication) {
     console.log("Has auth header");
     try {
@@ -23,7 +29,14 @@ export default defineEventHandler(async (event) => {
         event.context.error = error.message;
         event.context.auth = { id: undefined };
         deleteCookie(event, COOKIE_NAME);
+      }else{
+        deleteCookie(event, COOKIE_NAME);
+        console.error(error);
+        event.context.auth = { id: undefined };
       }
     }
+  }else{
+    deleteCookie(event, COOKIE_NAME);
+    console.error("Failed to find authentication header");
   }
 });

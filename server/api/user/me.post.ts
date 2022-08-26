@@ -3,7 +3,7 @@ import { UserDataSource } from "~~/server/src/User";
 import prisma from "~~/server/src/Prisma";
 
 export default defineEventHandler(async (evt): Promise<ReturnType> => {
-  console.log("Got Here!");
+  console.log(evt.context.auth);
   if (evt.context.auth.id === undefined) {
     if (evt.context.error) {
       return {
