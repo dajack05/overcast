@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { COOKIE_NAME } from '~~/Globals';
-import { useAuthStore } from '~~/store/useAuth';
+import { useAuthStore } from '~~/stores/useAuth';
 
 const auth = useAuthStore();
 
-onBeforeMount(async () => {
-    const cookie = useCookie(COOKIE_NAME);
-    if (cookie.value && cookie.value.length > 0) {
-        const error = await auth.fetchUser();
-        if (error) {
-            console.error(error);
-        }
-    }
-});
+// onBeforeMount(async () => {
+//     const cookie = useCookie(COOKIE_NAME);
+//     if (cookie.value && cookie.value.length > 0) {
+//         const error = await auth.fetchUser();
+//         if (error) {
+//             console.error(error);
+//         }
+//     }
+// });
+
+auth.getUser;
 
 async function logout() {
-    auth.logout();
+    // auth.logout();
 }
 </script>
 

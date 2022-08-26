@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAuthStore } from '~~/store/useAuth';
+import { useAuthStore } from '~~/stores/useAuth';
 
 const authStore = useAuthStore();
 
@@ -13,13 +13,13 @@ async function login() {
     button_enabled.value = false;
     error_message.value = "";
 
-    const error = await authStore.login(email.value, password.value);
+    // const error = await authStore.login(email.value, password.value);
 
-    if (error) {
-        error_message.value = error;
-    } else {
-        useRouter().push('/');
-    }
+    // if (error) {
+    //     error_message.value = error;
+    // } else {
+    //     useRouter().push('/');
+    // }
 
     button_enabled.value = true;
 }
