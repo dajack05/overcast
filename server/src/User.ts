@@ -87,7 +87,7 @@ export class UserDataSource {
 
   static GenerateToken(user: User): LoginToken {
     const token = Jwt.sign({ id: user.id }, process.env.JWT_KEY, {
-      expiresIn: `10s`,
+      expiresIn: `1h`,
     });
 
     return {

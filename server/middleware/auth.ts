@@ -30,13 +30,11 @@ export default defineEventHandler(async (event) => {
         event.context.auth = { id: undefined };
         deleteCookie(event, COOKIE_NAME);
       }else{
-        deleteCookie(event, COOKIE_NAME);
         console.error(error);
         event.context.auth = { id: undefined };
       }
     }
   }else{
-    deleteCookie(event, COOKIE_NAME);
     console.error("Failed to find authentication header");
   }
 });

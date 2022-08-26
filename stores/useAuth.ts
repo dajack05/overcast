@@ -8,7 +8,7 @@ interface AuthState {
 
 export const useAuthStore = defineStore("auth", {
   state: (): AuthState => ({
-    token: "",
+    token: useCookie(COOKIE_NAME).value,
     user: null,
   }),
 
@@ -42,6 +42,9 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async loadUser(): Promise<string | null> {
+
+      console.log(`Loading user with token "${this.token}"`);
+
       const value = await $fetch("/api/user/me", {
         method: "POST",
         headers: {
@@ -52,6 +55,7 @@ export const useAuthStore = defineStore("auth", {
       if (value.error) {
         console.error(value.error);
         this.user = null;
+        useCookie(COOKIE_NAME).value = undefined;
         return value.error;
       }
 

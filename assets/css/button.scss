@@ -1,0 +1,19 @@
+.button {
+  @apply shadow rounded transition-all px-4 py-2;
+
+  &.green {
+    @apply bg-lime-200 hover:bg-lime-100 active:bg-lime-300;
+  }
+
+  &.red {
+    @apply bg-red-200 hover:bg-red-100 active:bg-red-300;
+  }
+  
+  &.blue {
+    @apply bg-blue-200 hover:bg-blue-100 active:bg-blue-300;
+  }
+
+  &:disabled {
+    @apply cursor-not-allowed bg-slate-200 hover:bg-slate-200 active:bg-slate-200;
+  }
+}

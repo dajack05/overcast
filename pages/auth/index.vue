@@ -32,10 +32,8 @@ async function login() {
             <hr />
             <input v-model="email" type="text" placeholder="Email" />
             <input v-model="password" type="password" placeholder="Password" />
-            <button @click="() => login()" :disabled="!button_enabled" :class="{
-                'bg-slate-200': !button_enabled,
-                'bg-lime-200 hover:bg-lime-100 active:bg-lime-300': button_enabled,
-            }" class="shadow rounded transition-all px-4 py-2 ">
+
+            <button @click="() => login()" :disabled="!button_enabled" class="button green">
                 Login
             </button>
             <p v-if="error_message"
@@ -46,9 +44,3 @@ async function login() {
         </form>
     </div>
 </template>
-
-<style>
-input {
-    @apply shadow rounded px-4 py-2 transition-all focus:outline-lime-300 active:outline-lime-400 hover:outline-lime-500;
-}
-</style>
