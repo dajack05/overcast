@@ -27,9 +27,6 @@ async function login() {
 
 <template>
     <div class="w-full h-screen bg-slate-200 flex flex-col justify-center items-center">
-        <div>
-            {{ authStore.token }}
-        </div>
         <form @submit.prevent class="p-4 rounded bg-slate-100 shadow w-1/2 min-w-[400px] flex flex-col gap-2">
             <h1 class="text-4xl">Login</h1>
             <hr />

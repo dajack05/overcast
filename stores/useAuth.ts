@@ -30,13 +30,15 @@ export const useAuthStore = defineStore("auth", {
       const cookie = useCookie(COOKIE_NAME);
       this.token = cookie.value;
 
-      const userError = await this.loadUser();
-      if (userError) {
-        console.error(userError);
-        return userError;
-      }
-
       return null;
+    },
+
+    async logout(){
+      const cookie = useCookie(COOKIE_NAME);
+      cookie.value = undefined;
+      this.token = "";
+      this.user = null;
+      useRouter().push('/auth');
     },
 
     async loadUser(): Promise<string | null> {
