@@ -6,4 +6,3 @@ node_modules
 .env.secure
 dist
 coverage
-.nuxt
