@@ -12,6 +12,8 @@ const dob = ref("");
 const button_enabled = ref(true);
 const error_message = ref("");
 
+definePageMeta({ layout: false });
+
 async function register() {
     button_enabled.value = false;
 

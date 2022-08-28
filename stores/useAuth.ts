@@ -33,7 +33,7 @@ export const useAuthStore = defineStore("auth", {
       return null;
     },
 
-    async logout(){
+    logout(){
       const cookie = useCookie(COOKIE_NAME);
       cookie.value = undefined;
       this.token = "";
@@ -42,9 +42,6 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async loadUser(): Promise<string | null> {
-
-      console.log(`Loading user with token "${this.token}"`);
-
       const value = await $fetch("/api/user/me", {
         method: "POST",
         headers: {
@@ -53,9 +50,7 @@ export const useAuthStore = defineStore("auth", {
       });
 
       if (value.error) {
-        console.error(value.error);
-        this.user = null;
-        useCookie(COOKIE_NAME).value = undefined;
+        this.logout();
         return value.error;
       }
 
@@ -65,13 +60,5 @@ export const useAuthStore = defineStore("auth", {
   },
 
   getters: {
-    getUser(state) {
-      if (state.user) {
-        return state.user;
-      }
-
-      this.loadUser();
-      return state.user;
-    },
   },
 });

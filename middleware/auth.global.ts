@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
 
     const cookie = useCookie(COOKIE_NAME);
-    if (!cookie || !cookie.value) {
+    if (!cookie || !cookie.value || cookie.value.length <= 0) {
         return navigateTo('/auth');
     }
 });

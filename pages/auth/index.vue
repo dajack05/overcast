@@ -9,6 +9,8 @@ const password = ref("");
 const button_enabled = ref(true);
 const error_message = ref("");
 
+definePageMeta({ layout: false });
+
 async function login() {
     button_enabled.value = false;
     error_message.value = "";

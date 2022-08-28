@@ -7,5 +7,7 @@ await auth.loadUser();
 </script>
 
 <template>
-    <UserInfoDisplay :user="auth.user" />
+    <div>
+        Welcome {{auth.user.first_name}}
+    </div>
 </template>
