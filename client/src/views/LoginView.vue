@@ -1,11 +1,25 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useCookies } from "vue3-cookies";
 
 const email = ref("");
 const password = ref("");
 
 const loading = ref(false);
+
+const cookies = useCookies();
+const jwt = cookies.cookies.get("jwt");
+
+console.log(jwt);
+
+onMounted(()=>{
+    if(jwt){
+        // Logged in
+        useRouter().push("/");
+    }
+});
 
 async function login(){
     loading.value = true;
@@ -18,6 +32,7 @@ async function login(){
     console.log(text);
 
     loading.value = false;
+    cookies.cookies.set("jwt", text);
 }
 
 </script>
