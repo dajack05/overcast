@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { TokenManager } from "../Token";
-import { wait_ms } from "../utils";
 import { ERR, Message, OK } from "@ovc/common";
 import { User } from "../User";
+import { wait_ms } from "../Global";
 
-export async function LoginHandler(req: Request):Promise<Message> {
+export async function LoginHandler(req: Request): Promise<Message> {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -13,6 +13,8 @@ export async function LoginHandler(req: Request):Promise<Message> {
       // Find user
       const user = await User.GetByEmail(email);
       if (user && user.password === password) {
+        // Update last login
+        await User.Update({ ...user, last_logon: new Date() });
         return OK(TokenManager.Generate(user.email));
       }
     }

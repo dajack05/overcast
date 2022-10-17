@@ -11,10 +11,12 @@ datasource db {
 }
 
 model Users {
-  id         Int      @id @unique @default(autoincrement())
-  email      String   @unique
-  password   String
-  first_name String
-  last_name  String
-  dob        DateTime
+  id               Int      @id @unique @default(autoincrement())
+  email            String   @unique
+  password         String
+  first_name       String
+  last_name        String
+  dob              String
+  last_logon       DateTime @default(now())
+  permission_level Int      @default(0)
 }

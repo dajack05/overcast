@@ -1,9 +1,19 @@
-import { Prisma, PrismaClient, Users } from "@prisma/client";
+import { Users } from "@prisma/client";
+import { prisma } from "./Global";
 
 export class User {
-  static async GetByEmail(email: string): Promise<Users | null> {
-    const prisma = new PrismaClient();
+  static async Update(updatedUser: Users) {
+    try {
+      await prisma.users.update({
+        where: { id: updatedUser.id },
+        data: updatedUser,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
+  static async GetByEmail(email: string): Promise<Users | null> {
     try {
       const user = await prisma.users.findFirst({ where: { email } });
       await prisma.$disconnect();
@@ -12,7 +22,6 @@ export class User {
       console.error(err);
     }
 
-    await prisma.$disconnect();
     return null;
   }
 }
@@ -21,8 +30,6 @@ export async function CheckUser(
   email: string,
   password: string
 ): Promise<boolean> {
-  const prisma = new PrismaClient();
-
   const user = await prisma.users.findFirst({
     where: {
       email,
@@ -30,8 +37,6 @@ export async function CheckUser(
   });
 
   console.log(user);
-
-  await prisma.$disconnect();
 
   return true;
 }

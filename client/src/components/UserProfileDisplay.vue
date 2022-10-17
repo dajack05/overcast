@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import type { User } from '@ovc/common';
+import { useUserStore } from '@/stores/user';
+import { UserPermission, type User } from '@ovc/common';
+import { computed } from '@vue/reactivity';
+import { ref } from 'vue';
 
-export interface UserProfileProps{
-    user:User
+export interface UserProfileProps {
+    user: User
 }
 
-const props = defineProps<UserProfileProps>();
+defineProps<UserProfileProps>();
+
+const disabled = ref(true);
+const userStore = useUserStore();
+const permissionLevel = computed(() => userStore.user.permission_level);
+
+function toggleEdit() {
+    if (permissionLevel.value == UserPermission.ADMIN) {
+        disabled.value = !disabled.value;
+    }
+}
 
 </script>
 
@@ -15,16 +28,17 @@ const props = defineProps<UserProfileProps>();
             <tr>
                 <th>Name:</th>
                 <td class="flex">
-                    <input type="text" v-model="user.first_name" />
-                    <input type="text" v-model="user.last_name" />
+                    <input :disabled="disabled" type="text" v-model="user.first_name" />
+                    <input :disabled="disabled" type="text" v-model="user.last_name" />
                 </td>
             </tr>
             <tr>
                 <th>dob</th>
                 <td>
-                    <input type="date" v-model="user.dob" />
+                    <input :disabled="disabled" type="date" v-model="user.dob" />
                 </td>
             </tr>
         </table>
+        <button v-if="permissionLevel == UserPermission.ADMIN" @click="toggleEdit" class="btn warning">Edit</button>
     </div>
 </template>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useCookies } from "vue3-cookies";
-import jwtDecode, { type JwtPayload } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
 const SERVER = import.meta.env.VITE_SERVER_URL;
 
@@ -66,6 +66,7 @@ export const useUserStore = defineStore("user", () => {
 
       const message = response.data as Message;
       if (message.error) {
+        Logout();
         return message.error;
       }
 
