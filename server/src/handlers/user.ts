@@ -84,6 +84,7 @@ export async function GetUser(req: Request): Promise<Message> {
       first_name: user.first_name,
       last_name: user.last_name,
       dob: user.dob,
+      permission_level: user.permission_level,
     } as _User);
   } catch (err) {
     console.error(err);

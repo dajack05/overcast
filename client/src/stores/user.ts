@@ -1,4 +1,4 @@
-import { User, type Message } from "@ovc/common";
+import { User, UserPermission, type Message } from "@ovc/common";
 import axios from "axios";
 import { defineStore } from "pinia";
 import { ref } from "vue";
@@ -34,7 +34,7 @@ export const useUserStore = defineStore("user", () => {
     user.value.email = email;
 
     // Now get the user
-    const result = await getUser();
+    const result = await fetchUser();
     if (typeof result === "string") {
       console.error(result);
     }
@@ -51,7 +51,7 @@ export const useUserStore = defineStore("user", () => {
   /**
    * Returns the user or error strings if not logged in
    */
-  async function getUser(): Promise<User | string> {
+  async function fetchUser(): Promise<User | string> {
     if (!isLoggedIn()) {
       return "User Not Logged In";
     }
@@ -100,8 +100,8 @@ export const useUserStore = defineStore("user", () => {
 
         token.value = cookie_token;
         user.value.email = decoded.email;
-        
-        getUser().then((v) => {
+
+        fetchUser().then((v) => {
           if (typeof v === "string") {
             console.error(v);
           }
@@ -113,11 +113,16 @@ export const useUserStore = defineStore("user", () => {
     return false;
   }
 
+  const isAdmin = () =>
+    isLoggedIn() && user.value.permission_level === UserPermission.ADMIN;
+
   return {
     Login,
     Logout,
+
     isLoggedIn,
-    getUser,
+    isAdmin,
+    fetchUser,
 
     token,
     user,
