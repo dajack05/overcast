@@ -29,6 +29,22 @@ export class UserService {
     console.log(message.payload);
   }
 
+  static async GetAll(): Promise<User[] | string> {
+    const userStore = useUserStore();
+    const response = await axios.get(`${SERVER}/user`, {
+      params: {
+        token: userStore.token,
+      },
+    });
+
+    const message = response.data as Message;
+    if (message.error) {
+      return message.error;
+    }
+
+    return message.payload as User[];
+  }
+
   static async GetByEmail(email: string): Promise<User | string> {
     const userStore = useUserStore();
     if (!userStore.isLoggedIn()) {
@@ -70,8 +86,8 @@ export class UserService {
     return OK(token);
   }
 
-  static async Update(user:User):Promise<Message>{
-    const response = await axios.post(`${SERVER}/user`,{
+  static async Update(user: User): Promise<Message> {
+    const response = await axios.post(`${SERVER}/user`, {
       ...user,
       token: useUserStore().token,
     });

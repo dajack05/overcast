@@ -81,10 +81,6 @@ export async function GetUser(req: Request): Promise<Message> {
     return ERR("Missing token");
   }
 
-  if (!req.query.email) {
-    return ERR("Missing email");
-  }
-
   const token = req.query.token as string;
   // Verify token
   const is_token_valid = TokenManager.Verify(token);
@@ -93,14 +89,31 @@ export async function GetUser(req: Request): Promise<Message> {
     return ERR("Invalid Token");
   }
 
-  // Go get the user!
+  if(req.query.email){
+    return await GetUserByEmail(req.query.email as string);
+  }else{
+    return await GetAllUsers();
+  }
+}
+
+async function GetAllUsers(): Promise<Message> {
+  try {
+    const users = await prisma.users.findMany();
+    return OK(users);
+  } catch (err) {
+    console.error(err);
+    return ERR(err);
+  }
+}
+
+async function GetUserByEmail(email: string): Promise<Message> {
   try {
     const user = await prisma.users.findFirst({
-      where: { email: req.query.email as string },
+      where: { email },
     });
 
     if (!user) {
-      return ERR(`Failed to find user with email "${req.query.email}"`);
+      return ERR(`Failed to find user with email "${email}"`);
     }
 
     return OK({
