@@ -5,7 +5,15 @@ import { prisma } from "../Global";
 import { User } from "../User";
 
 export async function PostUser(req: Request): Promise<Message> {
-  const { token, email, password, dob, first_name, last_name } = req.body;
+  const {
+    token,
+    email,
+    password,
+    dob,
+    first_name,
+    last_name,
+    permission_level,
+  } = req.body;
 
   const user = await User.GetByEmail(email);
 
@@ -39,6 +47,10 @@ export async function PostUser(req: Request): Promise<Message> {
 
   // If user exists, update info
   if (user) {
+    let p = user.permission_level;
+    if (permission_level) {
+      p = permission_level;
+    }
     await User.Update({
       ...user,
       email,
@@ -46,6 +58,7 @@ export async function PostUser(req: Request): Promise<Message> {
       password,
       first_name,
       last_name,
+      permission_level: p,
     });
   } else {
     const result = await User.Create(
