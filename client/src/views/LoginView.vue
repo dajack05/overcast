@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import { UserService } from '@/services/User';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCookies } from "vue3-cookies";
@@ -24,15 +25,9 @@ onMounted(()=>{
 async function login(){
     loading.value = true;
 
-    const response = await fetch(`http://localhost:8080/login?username=${email.value}&password=${password.value}`,{
-        method:"GET",
-    });
-
-    const text = await response.text();
-    console.log(text);
+    const status = await UserService.Login(email.value,password.value);
 
     loading.value = false;
-    cookies.cookies.set("jwt", text);
 }
 
 </script>
