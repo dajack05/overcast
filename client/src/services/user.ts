@@ -1,5 +1,5 @@
 import { useUserStore } from "@/stores/user";
-import type { Message } from "@ovc/common";
+import { ERR, OK, type Message, type User } from "@ovc/common";
 import axios from "axios";
 
 const SERVER = import.meta.env.VITE_SERVER_URL;
@@ -27,5 +27,46 @@ export class UserService {
     }
 
     console.log(message.payload);
+  }
+
+  static async GetByEmail(email: string): Promise<User | string> {
+    const userStore = useUserStore();
+    if (!userStore.isLoggedIn()) {
+      return "User Not Logged In";
+    }
+
+    const response = await axios.get(`${SERVER}/user`, {
+      params: {
+        token: userStore.token,
+        email,
+      },
+    });
+
+    const message = response.data as Message;
+    if (message.error) {
+      return message.error;
+    }
+
+    // Got user
+    const user = message.payload as User;
+    return user;
+  }
+
+  static async Login(email: string, password: string): Promise<Message> {
+    const response = await axios.post(`${SERVER}/login`, {
+      email,
+      password,
+    });
+
+    // Did we get a token?
+    const message = response.data as Message;
+    if (message.error) {
+      return ERR(message.error);
+    }
+
+    // We got a token!
+    const token = message.payload as string;
+
+    return OK(token);
   }
 }

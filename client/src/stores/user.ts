@@ -1,11 +1,9 @@
-import { User, UserPermission, type Message } from "@ovc/common";
-import axios from "axios";
+import { User, UserPermission} from "@ovc/common";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import jwtDecode from "jwt-decode";
-
-const SERVER = import.meta.env.VITE_SERVER_URL;
+import { UserService } from "@/services/user";
 
 export const useUserStore = defineStore("user", () => {
   const token = ref("");
@@ -17,21 +15,17 @@ export const useUserStore = defineStore("user", () => {
     email: string,
     password: string
   ): Promise<string | undefined> {
-    const response = await axios.post(`${SERVER}/login`, {
-      email,
-      password,
-    });
+    {
+      const result = await UserService.Login(email, password);
+      if (result.error) {
+        return result.error;
+      }
 
-    // Did we get a token?
-    const message = response.data as Message;
-    if (message.error) {
-      return message.error;
+      // We got a token!
+      token.value = result.payload as string;
+      cookies.cookies.set("token", token.value, "1m");
+      user.value.email = email;
     }
-
-    // We got a token!
-    token.value = message.payload as string;
-    cookies.cookies.set("token", token.value, "1m");
-    user.value.email = email;
 
     // Now get the user
     const result = await fetchUser();
@@ -57,22 +51,12 @@ export const useUserStore = defineStore("user", () => {
     }
 
     if (!isUserPopulated()) {
-      const response = await axios.get(`${SERVER}/user`, {
-        params: {
-          token: token.value,
-          email: user.value.email,
-        },
-      });
-
-      const message = response.data as Message;
-      if (message.error) {
-        Logout();
-        return message.error;
+      const result = await UserService.GetByEmail(user.value.email);
+      if (typeof result == "string") {
+        return result;
       }
 
-      // Got user
-      user.value = message.payload as User;
-      console.log(message.payload);
+      user.value = result;
     }
 
     return user.value as User;
