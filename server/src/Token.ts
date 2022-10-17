@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export class TokenManager {
   static Generate(email: string): string {
-    return jwt.sign(email, process.env.JWT_SECRET);
+    return jwt.sign({email}, process.env.JWT_SECRET);
   }
 
   static Verify(token: string): boolean {

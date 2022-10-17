@@ -3,13 +3,18 @@
 @tailwind utilities;
 
 .btn {
-  @apply transition-colors bg-slate-300 hover:bg-slate-200 hover:shadow-md active:bg-slate-300 px-4 py-2 rounded-sm border;
+  @apply transition-colors bg-slate-300 hover:bg-slate-200 hover:shadow-md active:bg-slate-300 px-4 py-2 rounded-md border;
 }
 
 input {
-  @apply border text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+  @apply border text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2;
 }
 
 .btn.success {
-  @apply transition-colors bg-green-300 hover:bg-green-200 hover:shadow-md active:bg-green-300 px-4 py-2 rounded-sm border;
+  @apply transition-colors bg-green-300 hover:bg-green-200 hover:shadow-md active:bg-green-300 px-4 py-2 rounded-md border;
 }
+
+.btn.danger {
+  @apply transition-colors bg-red-300 hover:bg-red-200 hover:shadow-md active:bg-red-300 px-4 py-2 rounded-md border;
+}
+

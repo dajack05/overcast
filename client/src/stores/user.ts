@@ -1,13 +1,17 @@
-import type { Message, User } from "@ovc/common";
+import { User, type Message } from "@ovc/common";
 import axios from "axios";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { useCookies } from "vue3-cookies";
+import jwtDecode, { type JwtPayload } from "jwt-decode";
 
 const SERVER = import.meta.env.VITE_SERVER_URL;
 
 export const useUserStore = defineStore("user", () => {
   const token = ref("");
-  const user = ref<User | undefined>(undefined);
+  const user = ref<User>(new User());
+
+  const cookies = useCookies();
 
   async function Login(
     email: string,
@@ -26,10 +30,12 @@ export const useUserStore = defineStore("user", () => {
 
     // We got a token!
     token.value = message.payload as string;
+    cookies.cookies.set("token", token.value, "1m");
+    user.value.email = email;
 
     // Now get the user
     const result = await getUser();
-    if(typeof(result) === 'string'){
+    if (typeof result === "string") {
       console.error(result);
     }
 
@@ -38,7 +44,8 @@ export const useUserStore = defineStore("user", () => {
 
   function Logout() {
     token.value = "";
-    user.value = undefined;
+    user.value = new User();
+    cookies.cookies.remove("token");
   }
 
   /**
@@ -49,10 +56,11 @@ export const useUserStore = defineStore("user", () => {
       return "User Not Logged In";
     }
 
-    if (!user.value) {
+    if (!isUserPopulated()) {
       const response = await axios.get(`${SERVER}/user`, {
         params: {
           token: token.value,
+          email: user.value.email,
         },
       });
 
@@ -63,12 +71,46 @@ export const useUserStore = defineStore("user", () => {
 
       // Got user
       user.value = message.payload as User;
+      console.log(message.payload);
     }
 
     return user.value as User;
   }
 
-  const isLoggedIn = () => token.value.length > 0;
+  const isUserPopulated = () =>
+    user.value.first_name.length > 0 && user.value.last_name.length > 0;
+
+  function isLoggedIn(): boolean {
+    if (token.value.length > 0) {
+      return true;
+    }
+
+    // Do we have a token cookie?
+    if (cookies.cookies.isKey("token")) {
+      const cookie_token = cookies.cookies.get("token");
+
+      // Is it semi-valid?
+      if (cookie_token.length > 0) {
+        // Can we get the email from within it?
+        const decoded = jwtDecode<{ email: string; iat: number }>(cookie_token);
+        if (!decoded || !decoded.email) {
+          return false;
+        }
+
+        token.value = cookie_token;
+        user.value.email = decoded.email;
+        
+        getUser().then((v) => {
+          if (typeof v === "string") {
+            console.error(v);
+          }
+        });
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   return {
     Login,

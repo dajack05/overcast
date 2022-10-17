@@ -40,7 +40,7 @@ async function login() {
 </script>
 
 <template>
-    <main class="flex min-h-screen">
+    <main class="flex">
         <div class="border shadow-lg m-auto p-10">
             <h1 class="text-4xl">Login</h1>
             <p v-if="loading" class="text-center text-red-500 text-xl animate-bounce">Loading...</p>
