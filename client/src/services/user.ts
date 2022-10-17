@@ -69,4 +69,14 @@ export class UserService {
 
     return OK(token);
   }
+
+  static async Update(user:User):Promise<Message>{
+    const response = await axios.post(`${SERVER}/user`,{
+      ...user,
+      token: useUserStore().token,
+    });
+
+    const message = response.data as Message;
+    return message;
+  }
 }

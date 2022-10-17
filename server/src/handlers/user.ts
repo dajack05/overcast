@@ -1,10 +1,13 @@
-import { Request } from "express";
+import e, { Request } from "express";
 import { TokenManager } from "../Token";
 import { ERR, Message, OK, User as _User } from "@ovc/common";
 import { prisma } from "../Global";
+import { User } from "../User";
 
-export async function PutUser(req: Request): Promise<Message> {
+export async function PostUser(req: Request): Promise<Message> {
   const { token, email, password, dob, first_name, last_name } = req.body;
+
+  const user = await User.GetByEmail(email);
 
   if (!token) {
     return ERR("Missing token");
@@ -14,7 +17,7 @@ export async function PutUser(req: Request): Promise<Message> {
     return ERR("Missing email");
   }
 
-  if (!password) {
+  if (!password && !user) {
     return ERR("Missing password");
   }
 
@@ -34,19 +37,27 @@ export async function PutUser(req: Request): Promise<Message> {
     return ERR("Invalid Token");
   }
 
-  try {
-    await prisma.users.create({
-      data: {
-        email,
-        dob,
-        password,
-        first_name,
-        last_name,
-      },
+  // If user exists, update info
+  if (user) {
+    await User.Update({
+      ...user,
+      email,
+      dob,
+      password,
+      first_name,
+      last_name,
     });
-  } catch (err) {
-    console.log(err);
-    return ERR(err);
+  } else {
+    const result = await User.Create(
+      email,
+      dob,
+      password,
+      first_name,
+      last_name
+    );
+    if (result) {
+      return ERR(result);
+    }
   }
 
   return OK("OK");
