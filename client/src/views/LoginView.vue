@@ -1,31 +1,38 @@
 <script setup lang="ts">
 
-import { UserService } from '@/services/User';
+import { useUserStore } from '@/stores/user';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useCookies } from "vue3-cookies";
 
 const email = ref("");
 const password = ref("");
 
 const loading = ref(false);
+const error_msg = ref("");
 
-const cookies = useCookies();
-const jwt = cookies.cookies.get("jwt");
+const user = useUserStore();
+const router = useRouter();
 
-console.log(jwt);
-
-onMounted(()=>{
-    if(jwt){
+onMounted(() => {
+    if (user.isLoggedIn()) {
         // Logged in
-        useRouter().push("/");
+        router.push("/");
     }
 });
 
-async function login(){
+async function login() {
     loading.value = true;
 
-    const status = await UserService.Login(email.value,password.value);
+    // Reset error
+    error_msg.value = "";
+
+    const error = await user.Login(email.value, password.value);
+    if (error) {
+        error_msg.value = error;
+    } else {
+        // Fly home buddy
+        router.push("/");
+    }
 
     loading.value = false;
 }
@@ -38,9 +45,10 @@ async function login(){
             <h1 class="text-4xl">Login</h1>
             <p v-if="loading" class="text-center text-red-500 text-xl animate-bounce">Loading...</p>
             <form @submit.prevent="login" class="border-t mt-2 pt-2 flex flex-col gap-2">
-                <input :disabled="loading" v-model="email" type="email" placeholder="Email"/>
-                <input :disabled="loading" v-model="password" type="password" placeholder="Password"/>
+                <input :disabled="loading" v-model="email" type="email" placeholder="Email" />
+                <input :disabled="loading" v-model="password" type="password" placeholder="Password" />
                 <button :disabled="loading" class="btn success">Login</button>
+                <p class="text-red-500 font-bold text-center text-2xl transition-all">{{error_msg}}</p>
             </form>
         </div>
     </main>
