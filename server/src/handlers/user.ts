@@ -76,6 +76,23 @@ export async function PostUser(req: Request): Promise<Message> {
   return OK("OK");
 }
 
+export async function RemoveUser(req: Request): Promise<Message> {
+  if (!req.query.token) {
+    return ERR("Missing Token");
+  }
+
+  const token = req.query.token as string;
+  const is_token_valid = TokenManager.Verify(token);
+
+  if (!is_token_valid) {
+    return ERR("Invalid Token");
+  }
+
+  
+
+  return OK("OK");
+}
+
 export async function GetUser(req: Request): Promise<Message> {
   if (!req.query.token) {
     return ERR("Missing token");
@@ -89,9 +106,9 @@ export async function GetUser(req: Request): Promise<Message> {
     return ERR("Invalid Token");
   }
 
-  if(req.query.email){
+  if (req.query.email) {
     return await GetUserByEmail(req.query.email as string);
-  }else{
+  } else {
     return await GetAllUsers();
   }
 }
@@ -99,7 +116,18 @@ export async function GetUser(req: Request): Promise<Message> {
 async function GetAllUsers(): Promise<Message> {
   try {
     const users = await prisma.users.findMany();
-    return OK(users);
+
+    const safe_users = users.map((user) => {
+      return {
+        dob: user.dob,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        permission_level: user.permission_level,
+      } as _User;
+    });
+
+    return OK(safe_users);
   } catch (err) {
     console.error(err);
     return ERR(err);
