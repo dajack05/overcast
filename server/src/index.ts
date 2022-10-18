@@ -4,7 +4,7 @@ import express from "express";
 import { Request, Response } from "express-serve-static-core";
 import body_parser from "body-parser";
 import { LoginHandler } from "./handlers/login";
-import { GetUser, PostUser } from "./handlers/user";
+import { GetUser, PostUser, RemoveUser } from "./handlers/user";
 
 dotenv.config();
 
@@ -20,6 +20,7 @@ app.get("/", (req: Request, res: Response) => {
 app.post("/login", async (req, res) => res.send(await LoginHandler(req)));
 app.get("/user", async (req, res) => res.send(await GetUser(req)));
 app.post("/user", async (req, res) => res.send(await PostUser(req)));
+app.delete("/user", async (req, res) => res.send(await RemoveUser(req)));
 
 app.listen(process.env.PORT, () => {
   console.log("Let's a-go!!! Running on port " + process.env.PORT);

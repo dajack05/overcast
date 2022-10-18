@@ -95,4 +95,16 @@ export class UserService {
     const message = response.data as Message;
     return message;
   }
+
+  static async Remove(user:User): Promise<Message>{
+    const token = useUserStore().token;
+    const response = await axios.delete(`${SERVER}/user`, {
+      params:{
+        token,
+        ...user,
+      }
+    });
+
+    return response.data as Message;
+  }
 }

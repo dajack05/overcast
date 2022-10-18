@@ -44,6 +44,29 @@ async function save() {
     }
 }
 
+function cancel(){
+    disabled.value = true;
+    error_msg.value = "";
+    localUser.value = JSON.parse(JSON.stringify(props.user));
+}
+
+async function remove() {
+    if(isAdmin){
+        disabled.value =  true;
+        loading.value = true;
+
+        error_msg.value = "";
+        const result = await UserService.Remove(localUser.value);
+        if(result.error){
+            error_msg.value = result.error;
+        }
+
+        // todo: Update data?
+
+        loading.value = false;
+    }
+}
+
 </script>
 
 <template>
@@ -71,6 +94,8 @@ async function save() {
             </tr>
         </table>
         <button v-if="isAdmin && disabled" @click="edit" class="btn warning">Edit</button>
-        <button v-if="isAdmin && !disabled" @click="save" class="btn success">Save Changes</button>
+        <button v-if="isAdmin && !disabled" @click="cancel" class="btn warning">Cancel</button>
+        <button v-if="isAdmin && !disabled" @click="save" class="btn success">Save</button>
+        <button v-if="isAdmin && !disabled" @click="remove" class="btn danger">Delete</button>
     </div>
 </template>

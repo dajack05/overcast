@@ -39,7 +39,6 @@ export class User {
   static async GetByEmail(email: string): Promise<Users | null> {
     try {
       const user = await prisma.users.findFirst({ where: { email } });
-      await prisma.$disconnect();
       return user;
     } catch (err) {
       console.error(err);
