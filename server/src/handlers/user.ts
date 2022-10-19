@@ -1,8 +1,10 @@
-import e, { Request } from "express";
-import { TokenManager } from "../Token";
-import { ERR, Message, OK, User as _User } from "@ovc/common";
-import { prisma } from "../Global";
-import { User } from "../User";
+import {ERR, Message, OK, User as _User} from '@ovc/common';
+import e, {Request} from 'express';
+
+import {prisma} from '../Global';
+import {TokenManager} from '../Token';
+
+import {Users} from '.prisma/client';
 
 export async function PostUser(req: Request): Promise<Message> {
   const {
@@ -15,87 +17,118 @@ export async function PostUser(req: Request): Promise<Message> {
     permission_level,
   } = req.body;
 
-  const user = await User.GetByEmail(email);
+  const message = await GetUserByEmail(email);
 
   if (!token) {
-    return ERR("Missing token");
+    return ERR('Missing token');
   }
 
   if (!email) {
-    return ERR("Missing email");
+    return ERR('Missing email');
   }
 
-  if (!password && !user) {
-    return ERR("Missing password");
+  if (!password && message.error) {
+    return ERR('Missing password');
   }
 
   if (!dob) {
-    return ERR("Missing dob");
+    return ERR('Missing dob');
   }
 
   if (!first_name) {
-    return ERR("Missing first name");
+    return ERR('Missing first name');
   }
 
   if (!last_name) {
-    return ERR("Missing last name");
+    return ERR('Missing last name');
   }
 
   if (!TokenManager.Verify(token as string)) {
-    return ERR("Invalid Token");
+    return ERR('Invalid Token');
   }
 
   // If user exists, update info
-  if (user) {
+  if (!message.error) {
+    const user = message.payload as Users
     let p = user.permission_level;
     if (permission_level) {
       p = permission_level;
     }
-    await User.Update({
-      ...user,
-      email,
-      dob,
-      password,
-      first_name,
-      last_name,
-      permission_level: p,
-    });
+
+    // Update user
+    try {
+      await prisma.users.update({
+        where: {email},
+        data: {
+          ...user,
+          email,
+          dob,
+          password,
+          first_name,
+          last_name,
+          permission_level: p,
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      return ERR(err);
+    }
+
   } else {
-    const result = await User.Create(
-      email,
-      dob,
-      password,
-      first_name,
-      last_name
-    );
-    if (result) {
-      return ERR(result);
+    // Update user
+    try {
+      await prisma.users.create({
+        data: {
+          email,
+          dob,
+          password,
+          first_name,
+          last_name,
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      return ERR(err);
     }
   }
 
-  return OK("OK");
+  return OK('OK');
 }
 
 export async function RemoveUser(req: Request): Promise<Message> {
-  if (!req.query.token) {
-    return ERR("Missing Token");
+  const {token, email} = req.query;
+  if (!token) {
+    return ERR('Missing Token');
   }
 
-  const token = req.query.token as string;
-  const is_token_valid = TokenManager.Verify(token);
+  if (!email) {
+    return ERR('Missing Email');
+  }
+
+  const is_token_valid = TokenManager.Verify(token as string);
 
   if (!is_token_valid) {
-    return ERR("Invalid Token");
+    return ERR('Invalid Token');
   }
 
-  
+  try {
+    await prisma.users.delete({
+      where: {
+        email: email as string,
+      }
+    });
 
-  return OK("OK");
+  } catch (err) {
+    console.error(err);
+    return ERR(err);
+  }
+
+  return OK('OK');
 }
 
 export async function GetUser(req: Request): Promise<Message> {
   if (!req.query.token) {
-    return ERR("Missing token");
+    return ERR('Missing token');
   }
 
   const token = req.query.token as string;
@@ -103,7 +136,7 @@ export async function GetUser(req: Request): Promise<Message> {
   const is_token_valid = TokenManager.Verify(token);
 
   if (!is_token_valid) {
-    return ERR("Invalid Token");
+    return ERR('Invalid Token');
   }
 
   if (req.query.email) {
@@ -137,7 +170,7 @@ async function GetAllUsers(): Promise<Message> {
 async function GetUserByEmail(email: string): Promise<Message> {
   try {
     const user = await prisma.users.findFirst({
-      where: { email },
+      where: {email},
     });
 
     if (!user) {

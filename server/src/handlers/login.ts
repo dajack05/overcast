@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { TokenManager } from "../Token";
 import { ERR, Message, OK } from "@ovc/common";
-import { User } from "../User";
 import { wait_ms } from "../Global";
+import { User } from "../User";
 
 export async function LoginHandler(req: Request): Promise<Message> {
   const email = req.body.email;

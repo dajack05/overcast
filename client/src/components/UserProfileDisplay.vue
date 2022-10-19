@@ -9,6 +9,8 @@ export interface UserProfileProps {
     user: User
 }
 
+const emit = defineEmits(["change"]);
+
 const props = defineProps<UserProfileProps>();
 
 const loading = ref(true);
@@ -26,6 +28,7 @@ watch(props, (newProps) => {
 function edit() {
     if (isAdmin) {
         disabled.value = false;
+        emit('change');
     }
 }
 
@@ -41,6 +44,7 @@ async function save() {
         }
 
         loading.value = false;
+        emit('change');
     }
 }
 
@@ -48,6 +52,7 @@ function cancel(){
     disabled.value = true;
     error_msg.value = "";
     localUser.value = JSON.parse(JSON.stringify(props.user));
+    emit('change');
 }
 
 async function remove() {

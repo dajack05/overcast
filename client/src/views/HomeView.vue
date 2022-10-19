@@ -10,13 +10,21 @@ const userStore = useUserStore();
 const allUsers = ref<User[]>([]);
 
 onMounted(async ()=>{
+  await getAll();
+})
+
+function onProfileChange(){
+
+}
+
+async function getAll(){
   const _allUsers = await UserService.GetAll();
   if(typeof(_allUsers) === 'string'){
     console.error(_allUsers);
   }else{
     allUsers.value = _allUsers;
   }
-})
+}
 
 </script>
 
@@ -25,7 +33,7 @@ onMounted(async ()=>{
     <RouterLink v-if="!userStore.isLoggedIn()" class="btn text-2xl" to="/login">Login</RouterLink>
     <div class="flex flex-wrap" v-if="userStore.isLoggedIn()">
       <!-- Logged In Info -->
-      <UserProfileDisplay v-for="user,i in allUsers" :key="i" :user="user" />
+      <UserProfileDisplay @change="onProfileChange" v-for="user,i in allUsers" :key="i" :user="user" />
     </div>
   </main>
 </template>
