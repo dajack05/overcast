@@ -65,8 +65,8 @@ async function remove() {
         if(result.error){
             error_msg.value = result.error;
         }
-
-        // todo: Update data?
+        
+        emit('change');
 
         loading.value = false;
     }

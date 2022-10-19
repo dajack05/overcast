@@ -13,8 +13,8 @@ onMounted(async ()=>{
   await getAll();
 })
 
-function onProfileChange(){
-
+async function onProfileChange(){
+  await getAll();
 }
 
 async function getAll(){
@@ -23,6 +23,7 @@ async function getAll(){
     console.error(_allUsers);
   }else{
     allUsers.value = _allUsers;
+    console.log("Updated");
   }
 }
 
