@@ -1,12 +1,55 @@
 import {ERR, Message, OK, User as _User} from '@ovc/common';
-import e, {Request} from 'express';
+import {Request} from 'express';
 
 import {prisma} from '../Global';
 import {TokenManager} from '../Token';
 
-import {Users} from '.prisma/client';
+import { Users} from '.prisma/client';
 
-export async function PostUser(req: Request): Promise<Message> {
+export async function UpdateUser(req: Request): Promise<Message> {
+  const token = req.body.token as string;
+  const email = req.body.email as string;
+  const password = req.body.password as string;
+  const dob = req.body.dob as string;
+  const first_name = req.body.first_name as string;
+  const last_name = req.body.last_name as string;
+  const permission_level = req.body.permission_level as string;
+
+  if (!token) {
+    return ERR('Missing Token');
+  }
+
+  if (!email) {
+    return ERR('Missing Email');
+  }
+
+  const user = (await GetUserByEmail(email)).payload as Users
+  let p = user.permission_level;
+  if (permission_level) {
+    p = Number.parseInt(permission_level);
+  }
+
+  // Update user
+  try {
+    await prisma.users.update({
+      where: {email},
+      data: {
+        ...user,
+        email,
+        dob,
+        password,
+        first_name,
+        last_name,
+        permission_level: p,
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    return ERR(err);
+  }
+}
+
+export async function CreateUser(req: Request): Promise<Message> {
   const {
     token,
     email,
@@ -14,10 +57,9 @@ export async function PostUser(req: Request): Promise<Message> {
     dob,
     first_name,
     last_name,
-    permission_level,
-  } = req.body;
+  } = req.query;
 
-  const message = await GetUserByEmail(email);
+  const message = await GetUserByEmail(email as string);
 
   if (!token) {
     return ERR('Missing token');
@@ -47,49 +89,22 @@ export async function PostUser(req: Request): Promise<Message> {
     return ERR('Invalid Token');
   }
 
-  // If user exists, update info
-  if (!message.error) {
-    const user = message.payload as Users
-    let p = user.permission_level;
-    if (permission_level) {
-      p = permission_level;
+  try {
+    await prisma.users.create({
+      data: {
+        email:email as string,
+        dob:dob as string,
+        password:password as string,
+        first_name:first_name as string,
+        last_name:last_name as string,
+      }
+    });
+  } catch (err) {
+    if(err.code === "P2002"){
+      return ERR("Email Already Registered");
     }
-
-    // Update user
-    try {
-      await prisma.users.update({
-        where: {email},
-        data: {
-          ...user,
-          email,
-          dob,
-          password,
-          first_name,
-          last_name,
-          permission_level: p,
-        }
-      });
-    } catch (err) {
-      console.error(err);
-      return ERR(err);
-    }
-
-  } else {
-    // Update user
-    try {
-      await prisma.users.create({
-        data: {
-          email,
-          dob,
-          password,
-          first_name,
-          last_name,
-        }
-      });
-    } catch (err) {
-      console.error(err);
-      return ERR(err);
-    }
+    console.error(err.code);
+    return ERR(err);
   }
 
   return OK('OK');

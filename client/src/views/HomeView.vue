@@ -2,7 +2,7 @@
 import { UserService } from '@/services/user';
 import { useUserStore } from '@/stores/user';
 import type { User } from '@ovc/common';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import UserProfileDisplay from '../components/UserProfileDisplay.vue';
 
 const userStore = useUserStore();
@@ -23,7 +23,6 @@ async function getAll(){
     console.error(_allUsers);
   }else{
     allUsers.value = _allUsers;
-    console.log("Updated");
   }
 }
 
