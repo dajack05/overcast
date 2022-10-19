@@ -15,7 +15,12 @@ export async function LoginHandler(req: Request): Promise<Message> {
       if (user && user.password === password) {
         // Update last login
         await User.Update({ ...user, last_logon: new Date() });
-        return OK(TokenManager.Generate(user.email));
+        return OK(
+          TokenManager.Generate({
+            email: user.email,
+            permission_level: user.permission_level,
+          })
+        );
       }
     }
   }
