@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import express from "express";
 import { Request, Response } from "express-serve-static-core";
 import body_parser from "body-parser";
-import { LoginHandler } from "./handlers/login";
-import { GetUser, UpdateUser, CreateUser, RemoveUser } from "./handlers/user";
+import { LoginHandler } from "./handlers/LoginHandler";
+import { GetUser, UpdateUser, CreateUser, RemoveUser } from "./handlers/UserHandler";
 
 dotenv.config();
 
