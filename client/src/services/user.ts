@@ -12,7 +12,7 @@ export class UserService {
     first_name: string,
     last_name: string
   ): Promise<string | undefined> {
-    const response = await axios.put(`${SERVER}/user`, {
+    const response = await axios.put(`${SERVER}/user`,{
       token: useUserStore().token,
       email: email,
       password: password,

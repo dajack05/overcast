@@ -11,14 +11,13 @@ export class TokenManager {
     return jwt.sign(data, process.env.JWT_SECRET);
   }
 
-  static Verify(token: string): boolean | TokenData {
+  static Verify(token: string): TokenData | null {
     try {
       const result = jwt.verify(token, process.env.JWT_SECRET);
-      console.log(result);
-      return true;
+      return result as TokenData;
     } catch (err) {
       console.error(err);
-      return false;
     }
+    return null;
   }
 }

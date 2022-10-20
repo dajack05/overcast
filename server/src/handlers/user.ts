@@ -1,4 +1,4 @@
-import {ERR, Message, OK, User as _User} from '@ovc/common';
+import {ERR, Message, OK, User as _User, UserPermission} from '@ovc/common';
 import {Request} from 'express';
 
 import {prisma} from '../Global';
@@ -21,6 +21,15 @@ export async function UpdateUser(req: Request): Promise<Message> {
 
   if (!email) {
     return ERR('Missing Email');
+  }
+
+  const token_data = TokenManager.Verify(token);
+  if(!token){
+    return ERR('Invalid Token');
+  }
+
+  if(token_data.permission_level !== UserPermission.ADMIN){
+    return ERR('Not authorized to update user');
   }
 
   const user = (await GetUserByEmail(email)).payload as Users
@@ -57,9 +66,7 @@ export async function CreateUser(req: Request): Promise<Message> {
     dob,
     first_name,
     last_name,
-  } = req.query;
-
-  const message = await GetUserByEmail(email as string);
+  } = req.body;
 
   if (!token) {
     return ERR('Missing token');
@@ -69,7 +76,7 @@ export async function CreateUser(req: Request): Promise<Message> {
     return ERR('Missing email');
   }
 
-  if (!password && message.error) {
+  if (!password) {
     return ERR('Missing password');
   }
 
@@ -85,8 +92,13 @@ export async function CreateUser(req: Request): Promise<Message> {
     return ERR('Missing last name');
   }
 
-  if (!TokenManager.Verify(token as string)) {
+  const token_data = TokenManager.Verify(token as string);
+  if (!token_data) {
     return ERR('Invalid Token');
+  }
+
+  if(token_data.permission_level !== UserPermission.ADMIN){
+    return ERR('Must be admin to create user');
   }
 
   try {
@@ -120,10 +132,13 @@ export async function RemoveUser(req: Request): Promise<Message> {
     return ERR('Missing Email');
   }
 
-  const is_token_valid = TokenManager.Verify(token as string);
-
-  if (!is_token_valid) {
+  const token_data = TokenManager.Verify(token as string);
+  if (!token_data) {
     return ERR('Invalid Token');
+  }
+
+  if(token_data.permission_level !== UserPermission.ADMIN){
+    return ERR('You do not have permission to delete this user');
   }
 
   try {
