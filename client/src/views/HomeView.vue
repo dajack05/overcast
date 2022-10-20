@@ -4,6 +4,8 @@ import { useUserStore } from '@/stores/user';
 import type { User } from '@ovc/common';
 import { onMounted, ref } from 'vue';
 import UserProfileDisplay from '../components/UserProfileDisplay.vue';
+import UserViewer from '../components/UserViewer.vue';
+import GroupViewer from '../components/GroupViewer.vue';
 
 const userStore = useUserStore();
 
@@ -33,7 +35,9 @@ async function getAll(){
     <RouterLink v-if="!userStore.isLoggedIn()" class="btn text-2xl" to="/login">Login</RouterLink>
     <div class="flex flex-wrap" v-if="userStore.isLoggedIn()">
       <!-- Logged In Info -->
-      <UserProfileDisplay @change="onProfileChange" v-for="user,i in allUsers" :key="i" :user="user" />
+      <!-- <UserProfileDisplay @change="onProfileChange" v-for="user,i in allUsers" :key="i" :user="user" /> -->
+      <UserViewer />
+      <GroupViewer />
     </div>
   </main>
 </template>

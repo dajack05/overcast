@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,4 +16,11 @@ model Users {
   dob              String
   last_logon       DateTime @default(now())
   permission_level Int      @default(0)
+  groups           Groups[]
+}
+
+model Groups {
+  id    Int     @id @unique @default(autoincrement())
+  name  String
+  users Users[]
 }
