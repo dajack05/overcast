@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import jwtDecode from "jwt-decode";
-import { UserService } from "@/services/user";
+import { UserService } from "@/services/UserService";
 
 export const useUserStore = defineStore("user", () => {
   const token = ref("");

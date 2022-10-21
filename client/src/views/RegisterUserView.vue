@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserService } from '@/services/user';
+import { UserService } from '@/services/UserService';
 import { useUserStore } from '@/stores/user';
 import { UserPermission } from '@ovc/common';
 import { onMounted, ref } from 'vue';
