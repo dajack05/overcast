@@ -21,6 +21,6 @@ model Users {
 
 model Groups {
   id    Int     @id @unique @default(autoincrement())
-  name  String
+  name  String  @unique
   users Users[]
 }
