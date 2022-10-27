@@ -1,13 +1,11 @@
-import {ERR, Message, OK, User as _User, UserPermission} from '@ovc/common';
+import {ERR, Group, Message, OK, UserPermission} from '@ovc/common';
 import {Request} from 'express';
 
+import {GroupService} from '../services/GroupService';
 import {UserService} from '../services/UserService';
 import {TokenManager} from '../Token';
 
-import {Users} from '.prisma/client';
-import { GroupService } from '../services/GroupService';
-
-export async function UpdateGroup(req: Request): Promise<Message<_User>> {
+export async function UpdateGroup(req: Request): Promise<Message<Group>> {
   const token = req.body.token as string;
   const name = req.body.name as string;
   const new_name = req.body.new_name as string;
@@ -36,84 +34,75 @@ export async function UpdateGroup(req: Request): Promise<Message<_User>> {
     return ERR(group.error);
   }
 
-  const result = await GroupService.Update(name,group.payload)
+  const users = group.payload.users;
+  const ids_to_add =
+      user_ids.filter(id => users.find((user) => user.id === id));
+  for (const id of ids_to_add) {
+    const u = await UserService.FindById(id);
+    if (u.error) {
+      console.error(u.error);
+    } else {
+      users.push(u.payload);
+    }
+  }
+
+  const result = await GroupService.Update(name, users, new_name);
 
   if (result.error) {
     return ERR(result.error);
   }
 
-  return OK(UserService.Sanitize(result.payload));
+  return OK(GroupService.Sanitize(result.payload));
 }
 
-export async function CreateUser(req: Request): Promise<Message<_User>> {
+export async function CreateGroup(req: Request): Promise<Message<Group>> {
   const {
     token,
-    email,
-    password,
-    dob,
-    first_name,
-    last_name,
+    name,
   } = req.body;
 
   if (!token) {
     return ERR('Missing token');
   }
 
-  if (!email) {
-    return ERR('Missing email');
-  }
-
-  if (!password) {
-    return ERR('Missing password');
-  }
-
-  if (!dob) {
-    return ERR('Missing dob');
-  }
-
-  if (!first_name) {
-    return ERR('Missing first name');
-  }
-
-  if (!last_name) {
-    return ERR('Missing last name');
-  }
-
   const token_data = TokenManager.Verify(token as string);
-
   if (!token_data || token_data.permission_level !== UserPermission.ADMIN) {
     return ERR('Invalid Token');
   }
 
-  return await UserService.Create({
-    dob: dob as string,
-    email: email as string,
-    first_name: first_name as string,
-    last_name: last_name as string,
-    password: password as string,
-  });
+  if (!name) {
+    return ERR('Missing group name');
+  }
+
+
+  const group = await GroupService.Create(name as string);
+  if(group.error){
+    console.error(group.error);
+    return ERR(group.error);
+  }
+
+  return OK(GroupService.Sanitize(group.payload));
 }
 
-export async function RemoveUser(req: Request): Promise<Message<any>> {
-  const {token, email} = req.query;
+export async function RemoveGroup(req: Request): Promise<Message<any>> {
+  const {token, id} = req.query;
   if (!token) {
     return ERR('Missing Token');
   }
 
-  if (!email) {
-    return ERR('Missing Email');
-  }
-
   const token_data = TokenManager.Verify(token as string);
-
   if (!token_data || token_data.permission_level !== UserPermission.ADMIN) {
     return ERR('Invalid Token');
   }
 
-  return await UserService.Delete(email as string);
+  if (!id) {
+    return ERR('Missing Id');
+  }
+
+  return await GroupService.Delete(Number.parseInt(id as string));
 }
 
-export async function GetUser(req: Request): Promise<Message<Users|Users[]>> {
+export async function GetGroup(req: Request): Promise<Message<Group|Group[]>> {
   if (!req.query.token) {
     return ERR('Missing token');
   }
@@ -126,9 +115,16 @@ export async function GetUser(req: Request): Promise<Message<Users|Users[]>> {
     return ERR('Invalid Token');
   }
 
-  if (req.query.email) {
-    return await UserService.FindByEmail(req.query.email as string);
-  } else {
-    return await UserService.GetAll();
+  const result = req.query.id ? await GroupService.FindById(Number.parseInt(req.query.id as string)) : await GroupService.GetAll();
+  if(result.error){
+    console.error(result.error);
+    return ERR(result.error);
   }
+
+  if(Array.isArray(result.payload)){
+    const sanitized_groups = result.payload.map(g=>GroupService.Sanitize(g));
+    return OK(sanitized_groups);
+  }
+
+  return OK(GroupService.Sanitize(result.payload));
 }

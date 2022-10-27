@@ -72,6 +72,19 @@ export class UserService {
     }
   }
 
+  static async FindById(id:number):Promise<Message<Users>>{
+    try{
+      const user = await prisma.users.findUnique({where:{id}});
+      if(user){
+        return OK(user);
+      }
+      return ERR("Failed to find user with id "+id);
+    }catch(err){
+      console.error(err);
+      ERR(err);
+    }
+  }
+
   static async GetAll(): Promise<Message<Users[]>> {
     try {
       const users = await prisma.users.findMany();

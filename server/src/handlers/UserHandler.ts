@@ -1,12 +1,10 @@
-import {ERR, Message, OK, User as _User, UserPermission} from '@ovc/common';
+import {ERR, Message, OK, User, UserPermission} from '@ovc/common';
 import {Request} from 'express';
 
 import {UserService} from '../services/UserService';
 import {TokenManager} from '../Token';
 
-import {Users} from '.prisma/client';
-
-export async function UpdateUser(req: Request): Promise<Message<_User>> {
+export async function UpdateUser(req: Request): Promise<Message<User>> {
   const token = req.body.token as string;
   const email = req.body.email as string;
   const password = req.body.password as string;
@@ -51,7 +49,7 @@ export async function UpdateUser(req: Request): Promise<Message<_User>> {
   return OK(UserService.Sanitize(result.payload));
 }
 
-export async function CreateUser(req: Request): Promise<Message<_User>> {
+export async function CreateUser(req: Request): Promise<Message<User>> {
   const {
     token,
     email,
@@ -119,7 +117,7 @@ export async function RemoveUser(req: Request): Promise<Message<any>> {
   return await UserService.Delete(email as string);
 }
 
-export async function GetUser(req: Request): Promise<Message<Users|Users[]>> {
+export async function GetUser(req: Request): Promise<Message<User|User[]>> {
   if (!req.query.token) {
     return ERR('Missing token');
   }
@@ -132,9 +130,16 @@ export async function GetUser(req: Request): Promise<Message<Users|Users[]>> {
     return ERR('Invalid Token');
   }
 
-  if (req.query.email) {
-    return await UserService.FindByEmail(req.query.email as string);
-  } else {
-    return await UserService.GetAll();
+  const result = req.query.email ? await UserService.FindByEmail(req.query.email as string) : await UserService.GetAll();
+  if(result.error){
+    console.error(result.error);
+    return ERR(result.error);
   }
+
+  if(Array.isArray(result.payload)){
+    const sanitized_users = result.payload.map(u=>UserService.Sanitize(u));
+    return OK(sanitized_users);
+  }
+
+  return OK(UserService.Sanitize(result.payload));
 }
