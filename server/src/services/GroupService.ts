@@ -1,15 +1,17 @@
-import {ERR, Message, OK, User} from '@ovc/common';
+import {ERR, Message, OK} from '@ovc/common';
 
 import {prisma} from '../Global'
 
 import {Groups, Users} from '.prisma/client';
 
 export class GroupService {
-  static async Create(name:string): Promise<Message<Groups>> {
+  static async Create(name: string): Promise<Message<Groups>> {
     try {
-      const result = await prisma.groups.create({data: {
-        name,
-      }});
+      const result = await prisma.groups.create({
+        data: {
+          name,
+        }
+      });
       console.log('Created group', name);
       return OK(result);
     } catch (err) {
@@ -18,16 +20,19 @@ export class GroupService {
     }
   }
 
-  static async Update(name:string, users:Users[], new_name:string|undefined): Promise<Message<Groups>> {
+  static async Update(name: string, users: Users[], new_name: string|undefined):
+      Promise<Message<Groups>> {
     try {
-      if(!new_name){
+      if (!new_name) {
         new_name = name;
       }
       const result = await prisma.groups.update({
-        where: {name:name},
+        where: {name: name},
         data: {
-          name:new_name,
-          
+          name: new_name,
+          users: {
+            connect: users,
+          },
         }
       });
       return OK(result);
@@ -37,10 +42,10 @@ export class GroupService {
     }
   }
 
-  static async Delete(email: string): Promise<Message<any>> {
+  static async Delete(name: string): Promise<Message<any>> {
     try {
-      await prisma.users.delete({where: {email}});
-      console.log('Deleted user', {email});
+      await prisma.groups.delete({where: {name}});
+      console.log('Deleted group', {name});
       return OK('');
     } catch (err) {
       console.log('ERROR:' + err);
@@ -48,39 +53,52 @@ export class GroupService {
     }
   }
 
-  static async FindByEmail(email: string): Promise<Message<Users>> {
+  static async FindByName(name: string): Promise<Message<Groups>> {
     try {
-      const user = await prisma.users.findUnique({where: {email}});
-      if (user) {
-        return OK(user);
+      const group = await prisma.groups.findUnique({where: {name}});
+      if (group) {
+        return OK(group);
       }
-      return ERR('Failed to find user with email:' + email);
+      return ERR('Failed to find group with name:' + name);
     } catch (err) {
       console.log('ERROR:' + err);
       return ERR(err);
     }
   }
 
-  static async GetAll(): Promise<Message<Users[]>> {
+  static async FindByUserEmail(email: string): Promise<Message<Groups[]>> {
     try {
-      const users = await prisma.users.findMany();
-      if (users) {
-        return OK(users);
+      const groups = await prisma.groups.findMany({
+        where: {
+          users: {
+            some: {
+              email,
+            }
+          }
+        }
+      });
+
+      if (!groups) {
+        return ERR('Unable to find any groups with user with email: ' + email);
       }
-      return ERR('Failed to find any users');
+
+      return OK(groups);
     } catch (err) {
-      console.log('ERROR:' + err);
+      console.error(err);
       return ERR(err);
     }
   }
 
-  static Sanitize(input: Users): User {
-    return {
-      dob: input.dob,
-      email: input.email,
-      first_name: input.first_name,
-      last_name: input.last_name,
-      permission_level: input.permission_level
-    };
+  static async GetAll(): Promise<Message<Groups[]>> {
+    try {
+      const groups = await prisma.groups.findMany();
+      if (groups) {
+        return OK(groups);
+      }
+      return ERR('Failed to find any groups');
+    } catch (err) {
+      console.log('ERROR:' + err);
+      return ERR(err);
+    }
   }
 }
