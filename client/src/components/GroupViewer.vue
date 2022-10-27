@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { UserService } from '@/services/UserService';
-import type { User } from '@ovc/common';
+import { GroupService } from '@/services/GroupService';
+import type { Group } from '@ovc/common';
 import { onMounted, ref } from "vue";
-import UserProfileDisplay from "./UserProfileDisplay.vue";
+import GroupProfileDisplay from './GroupProfileDisplay.vue';
 
-const all_users = ref<User[]>();
+const all_groups = ref<Group[]>();
 
 onMounted(async ()=>{
-    const new_users = await UserService.GetAll();
-    if(typeof(new_users) !== 'string'){
-        all_users.value = new_users;
+    const new_groups = await GroupService.GetAll();
+    if(typeof(new_groups) !== 'string'){
+        all_groups.value = new_groups;
     }
 })
 </script>
@@ -18,7 +18,7 @@ onMounted(async ()=>{
     <div class="border rounded-md">
         <p class="text-2xl">All Groups</p>
         <div>
-            <UserProfileDisplay v-for="user,i in all_users" :key="i" :user="user" />
+            <GroupProfileDisplay v-for="group,i in all_groups" :key="i" :group="group" />
         </div>
     </div>
 </template>

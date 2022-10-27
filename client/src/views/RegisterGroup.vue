@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { GroupService } from '@/services/GroupService';
 import { UserService } from '@/services/UserService';
 import { useUserStore } from '@/stores/user';
 import { UserPermission } from '@ovc/common';
@@ -25,13 +26,12 @@ async function register() {
 
     error_msg.value = "";
 
-    if (password.value !== password_confirm.value) {
-        error_msg.value = "Passwords must match";
-    } else {
-        const result = await UserService.Register(email.value, password.value, dob.value, first_name.value, last_name.value);
-        if (result) {
-            error_msg.value = result;
-        }
+    const result = await GroupService.Create(name.value);
+    if (result) {
+        error_msg.value = result;
+    }else{
+        alert(`"${name.value}" Group Created`);
+        name.value = "";
     }
 
     loading.value = false;
@@ -42,13 +42,13 @@ async function register() {
 <template>
     <main class="flex">
         <div class="border shadow-lg m-auto p-10">
-            <h1 class="text-4xl">Register</h1>
+            <h1 class="text-4xl">Register Group</h1>
             <p v-if="loading" class="text-center text-red-500 text-xl animate-bounce">Loading...</p>
             <form @submit.prevent="register" class="border-t mt-2 pt-2 flex flex-col gap-2">
-                <label>First Name</label>
-                <input :disabled="loading" v-model="name" type="text" placeholder="First Name" required />
+                <label>Group Name</label>
+                <input :disabled="loading" v-model="name" type="text" placeholder="Group Name" required />
                 <button :disabled="loading" class="btn success">Register</button>
-                <p class="text-red-500 font-bold text-center text-2xl transition-all">{{error_msg}}</p>
+                <p class="text-red-500 font-bold text-center text-2xl transition-all">{{ error_msg }}</p>
             </form>
         </div>
     </main>

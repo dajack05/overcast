@@ -32,6 +32,7 @@ function logout(){
             <div v-if="loggedIn" class="flex justify-center gap-2">
                 <RouterLink class="btn" to="/">Home</RouterLink>
                 <RouterLink v-if="isAdmin" class="btn" to="/register">Register User</RouterLink>
+                <RouterLink v-if="isAdmin" class="btn" to="/register_group">Register Group</RouterLink>
             </div>
         </div>
         <div class="w-1/4 flex justify-end">

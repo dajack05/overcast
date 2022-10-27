@@ -47,7 +47,7 @@ async function register() {
 <template>
     <main class="flex">
         <div class="border shadow-lg m-auto p-10">
-            <h1 class="text-4xl">Register</h1>
+            <h1 class="text-4xl">Register User</h1>
             <p v-if="loading" class="text-center text-red-500 text-xl animate-bounce">Loading...</p>
             <form @submit.prevent="register" class="border-t mt-2 pt-2 flex flex-col gap-2">
                 <div class="flex gap-2">
