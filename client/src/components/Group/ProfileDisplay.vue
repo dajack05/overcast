@@ -23,7 +23,6 @@ const userStore = useUserStore();
 const isAdmin = computed(() => userStore.isAdmin());
 
 const add_member_shown = ref(false);
-const available_users = ref<User[]>([]);
 
 const localGroup = ref<Group>(JSON.parse(JSON.stringify(props.group)));
 watch(props, (newProps) => {
@@ -32,10 +31,6 @@ watch(props, (newProps) => {
 
 async function showAddUser() {
     add_member_shown.value = true;
-    const users = await UserService.GetAll();
-    if(typeof(users) !== "string"){
-        available_users.value = users.filter(u=>localGroup.value.users.includes(u));
-    }
 }
 
 function edit() {
