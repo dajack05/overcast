@@ -2,7 +2,7 @@
 import { GroupService } from '@/services/GroupService';
 import type { Group } from '@ovc/common';
 import { onMounted, ref } from "vue";
-import GroupProfileDisplay from './GroupProfileDisplay.vue';
+import GroupProfileDisplay from './ProfileDisplay.vue';
 
 const all_groups = ref<Group[]>();
 

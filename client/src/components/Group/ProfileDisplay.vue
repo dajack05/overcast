@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/user';
 import type { Group, User } from '@ovc/common';
 import { computed } from '@vue/reactivity';
 import { ref, watch } from 'vue';
+import MemberEditor from './MemberEditor.vue';
 
 export interface UserProfileProps {
     group: Group
@@ -116,25 +117,6 @@ async function remove() {
         <button v-if="isAdmin && !disabled" @click="save" class="btn success">Save</button>
         <button v-if="isAdmin && !disabled" @click="remove" class="btn danger">Delete</button>
 
-        <!-- Add User Dialog -->
-        <div v-if="add_member_shown">
-            <div class="absolute top-0 bottom-0 left-0 right-0 bg-black opacity-50">
-            </div>
-            <div class="absolute top-0 bottom-0 left-0 right-0 flex justify-center items-center">
-                <div class="bg-slate-50 rounded-md">
-                    <div class="flex flex-row-reverse">
-                        <button @click="add_member_shown = false" class="btn danger">X</button>
-                    </div>
-                    <div class="p-4">
-                        <p class="text-2xl text-black opacity-100">Add Member to {{ localGroup.name }}</p>
-                        <hr />
-                        <div v-for="user,i in available_users" :key="i">
-                            <strong>{{user.first_name}} {{user.last_name}}</strong>
-                            <button class="btn success">Add</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <MemberEditor v-if="add_member_shown" @cancel="add_member_shown = false" :group="localGroup" />
     </div>
 </template>

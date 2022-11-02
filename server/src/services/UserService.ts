@@ -100,6 +100,7 @@ export class UserService {
 
   static Sanitize(input: Users): User {
     return {
+      id: input.id,
       dob: input.dob,
       email: input.email,
       first_name: input.first_name,

@@ -5,7 +5,7 @@ import type { User } from '@ovc/common';
 import { onMounted, ref } from 'vue';
 import UserProfileDisplay from '../components/UserProfileDisplay.vue';
 import UserViewer from '../components/UserViewer.vue';
-import GroupViewer from '../components/GroupViewer.vue';
+import GroupViewer from '../components/Group/Viewer.vue';
 
 const userStore = useUserStore();
 
