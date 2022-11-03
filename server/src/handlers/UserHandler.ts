@@ -33,13 +33,12 @@ export async function UpdateUser(req: Request): Promise<Message<User>> {
   }
 
   const result = await UserService.Update({
-    user: user.payload,
-    dob,
-    email,
-    first_name,
-    last_name,
-    password,
-    permission_level: Number.parseInt(permission_level),
+    id: user.payload.id,
+    dob: dob ?? user.payload.password,
+    email: email ?? user.payload.email,
+    first_name: first_name ?? user.payload.first_name,
+    last_name: last_name ?? user.payload.last_name,
+    permission_level: permission_level ? Number.parseInt(permission_level) : user.payload.permission_level,
   });
 
   if (result.error) {
@@ -130,14 +129,16 @@ export async function GetUser(req: Request): Promise<Message<User|User[]>> {
     return ERR('Invalid Token');
   }
 
-  const result = req.query.email ? await UserService.FindByEmail(req.query.email as string) : await UserService.GetAll();
-  if(result.error){
+  const result = req.query.email ?
+      await UserService.FindByEmail(req.query.email as string) :
+      await UserService.GetAll();
+  if (result.error) {
     console.error(result.error);
     return ERR(result.error);
   }
 
-  if(Array.isArray(result.payload)){
-    const sanitized_users = result.payload.map(u=>UserService.Sanitize(u));
+  if (Array.isArray(result.payload)) {
+    const sanitized_users = result.payload.map(u => UserService.Sanitize(u));
     return OK(sanitized_users);
   }
 

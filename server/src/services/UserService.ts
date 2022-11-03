@@ -11,9 +11,14 @@ export interface ICreateUser {
 }
 
 export interface IUpdateUser {
-  user: User, email?: string, password?: string, first_name?: string,
-      last_name?: string, dob?: string, permission_level?: number,
-      last_logon?: Date,
+  id:number
+  email?: string
+  password?: string
+  first_name?: string
+  last_name?: string
+  dob?: string
+  permission_level?: number
+  last_logon?: Date
 }
 
 export class UserService {
@@ -34,20 +39,15 @@ export class UserService {
 
   static async Update(args: IUpdateUser): Promise<Message<Users>> {
     try {
-      const final_args: IUpdateUser = {
-        ...args,
-        password: bcrypt.hashSync(args.password, 10),
-      };
       const result = await prisma.users.update({
-        where: {email: args.user.email},
+        where: {id: args.id},
         data: {
-          dob: final_args.dob,
-          email: final_args.email,
-          first_name: final_args.first_name,
-          last_name: final_args.last_name,
-          last_logon: final_args.last_logon,
-          password: final_args.password,
-          permission_level: final_args.permission_level,
+          dob: args.dob,
+          email: args.email,
+          first_name: args.first_name,
+          last_name: args.last_name,
+          last_logon: args.last_logon,
+          permission_level: args.permission_level,
         }
       });
       return OK(result);
@@ -57,7 +57,7 @@ export class UserService {
     }
   }
 
-  static async UpdateTimestamp(user:Users): Promise<Message<Users>> {
+  static async UpdateTimestamp(user: Users): Promise<Message<Users>> {
     try {
       const result = await prisma.users.update({
         where: {email: user.email},
