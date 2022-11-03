@@ -97,9 +97,13 @@ async function remove() {
             <tr>
                 <th>
                     Members
-                    <button v-if="isAdmin && !disabled" @click="showAddUser" class="btn warning">Add
-                        Member</button>
                 </th>
+                <td>
+                    <button v-if="isAdmin && !disabled" @click="showAddUser" class="btn warning">Add Member</button>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
                 <td>
                     <ul class="list-disc text-left px-2">
                         <li v-for="user, i in localGroup.users" :key="i">{{ user.first_name }}</li>

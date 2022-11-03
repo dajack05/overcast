@@ -9,7 +9,7 @@ export async function UpdateGroup(req: Request): Promise<Message<Group>> {
   const token = req.body.token as string;
   const name = req.body.name as string;
   const new_name = req.body.new_name as string;
-  const user_ids = req.body.users as number[];
+  const user_ids = req.body.user_ids as number[];
 
   if (!token) {
     return ERR('Missing Token');
@@ -34,9 +34,9 @@ export async function UpdateGroup(req: Request): Promise<Message<Group>> {
     return ERR(group.error);
   }
 
+
   const users = group.payload.users;
-  const ids_to_add =
-      user_ids.filter(id => users.find((user) => user.id === id));
+  const ids_to_add = user_ids.filter(id => users.find(u=>u.id === id) === undefined);
   for (const id of ids_to_add) {
     const u = await UserService.FindById(id);
     if (u.error) {
@@ -46,6 +46,7 @@ export async function UpdateGroup(req: Request): Promise<Message<Group>> {
     }
   }
 
+  console.log(users);
   const result = await GroupService.Update(name, users, new_name);
 
   if (result.error) {
