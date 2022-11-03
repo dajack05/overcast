@@ -1,35 +1,32 @@
-import { useUserStore } from "@/stores/user";
-import { ERR, OK, type Message, type User } from "@ovc/common";
-import axios from "axios";
+import {useUserStore} from '@/stores/user';
+import {ERR, OK, type Message, type User} from '@ovc/common';
+import axios from 'axios';
+import {sha256} from 'hash.js'
 
 const SERVER = import.meta.env.VITE_SERVER_URL;
 
 export class UserService {
   static async Register(
-    email: string,
-    password: string,
-    dob: string,
-    first_name: string,
-    last_name: string
-  ): Promise<string | undefined> {
-    const response = await axios.put(`${SERVER}/user`,{
+      email: string, password: string, dob: string, first_name: string,
+      last_name: string): Promise<string|undefined> {
+    const safe_password = sha256().update(password).digest('hex');
+
+    const response = await axios.put(`${SERVER}/user`, {
       token: useUserStore().token,
       email: email,
-      password: password,
+      password: safe_password,
       dob: dob,
       first_name: first_name,
       last_name: last_name,
     });
 
-    const message = response.data as Message;
+    const message = response.data as Message<User>;
     if (message.error) {
       return message.error;
     }
-
-    console.log(message.payload);
   }
 
-  static async GetAll(): Promise<User[] | string> {
+  static async GetAll(): Promise<User[]|string> {
     const userStore = useUserStore();
     const response = await axios.get(`${SERVER}/user`, {
       params: {
@@ -37,7 +34,7 @@ export class UserService {
       },
     });
 
-    const message = response.data as Message;
+    const message = response.data as Message<User[]>;
     if (message.error) {
       return message.error;
     }
@@ -45,10 +42,10 @@ export class UserService {
     return message.payload as User[];
   }
 
-  static async GetByEmail(email: string): Promise<User | string> {
+  static async GetByEmail(email: string): Promise<User|string> {
     const userStore = useUserStore();
     if (!userStore.isLoggedIn()) {
-      return "User Not Logged In";
+      return 'User Not Logged In';
     }
 
     const response = await axios.get(`${SERVER}/user`, {
@@ -58,7 +55,7 @@ export class UserService {
       },
     });
 
-    const message = response.data as Message;
+    const message = response.data as Message<User>;
     if (message.error) {
       return message.error;
     }
@@ -68,14 +65,17 @@ export class UserService {
     return user;
   }
 
-  static async Login(email: string, password: string): Promise<Message> {
+  static async Login(email: string, password: string):
+      Promise<Message<string>> {
+        
+    const safe_password = sha256().update(password).digest('hex');
     const response = await axios.post(`${SERVER}/login`, {
-      email,
-      password,
+      email: email,
+      password: safe_password,
     });
 
     // Did we get a token?
-    const message = response.data as Message;
+    const message = response.data as Message<string>;
     if (message.error) {
       return ERR(message.error);
     }
@@ -86,25 +86,28 @@ export class UserService {
     return OK(token);
   }
 
-  static async Update(user: User): Promise<Message> {
+  static async Update(user: User): Promise<Message<User>> {
     const response = await axios.post(`${SERVER}/user`, {
       ...user,
       token: useUserStore().token,
     });
 
-    const message = response.data as Message;
+    const message = response.data as Message<User>;
     return message;
   }
 
-  static async Remove(user:User): Promise<Message>{
+  static async Remove(user: User): Promise<string|undefined> {
     const token = useUserStore().token;
     const response = await axios.delete(`${SERVER}/user`, {
-      params:{
+      params: {
         token,
         ...user,
       }
     });
 
-    return response.data as Message;
+    const data = response.data as Message<any>;
+    if (data.error) {
+      return data.error;
+    }
   }
 }

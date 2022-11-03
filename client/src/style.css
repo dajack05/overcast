@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .btn {
-  @apply transition-colors bg-slate-300 hover:bg-slate-200 hover:shadow-md active:bg-slate-300 px-4 py-2 rounded-md border;
+  @apply transition-colors bg-slate-300 hover:bg-slate-200 hover:shadow-md active:bg-slate-300 px-4 py-2 rounded-md ;
 }
 
 input {
@@ -11,15 +11,15 @@ input {
 }
 
 .btn.success {
-  @apply transition-colors bg-green-300 hover:bg-green-200 hover:shadow-md active:bg-green-300 px-4 py-2 rounded-md border;
+  @apply transition-colors bg-green-300 hover:bg-green-200 hover:shadow-md active:bg-green-300 px-4 py-2 rounded-md ;
 }
 
 .btn.warning {
-  @apply transition-colors bg-yellow-300 hover:bg-yellow-200 hover:shadow-md active:bg-yellow-300 px-4 py-2 rounded-md border;
+  @apply transition-colors bg-yellow-300 hover:bg-yellow-200 hover:shadow-md active:bg-yellow-300 px-4 py-2 rounded-md ;
 }
 
 
 .btn.danger {
-  @apply transition-colors bg-red-300 hover:bg-red-200 hover:shadow-md active:bg-red-300 px-4 py-2 rounded-md border;
+  @apply transition-colors bg-red-300 hover:bg-red-200 hover:shadow-md active:bg-red-300 px-4 py-2 rounded-md ;
 }
 

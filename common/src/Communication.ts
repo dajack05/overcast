@@ -1,6 +1,6 @@
 export interface Message<T> {
-  error: string | undefined;
-  payload: T | undefined;
+  error?: string;
+  payload?: T;
 }
 
 export function OK<T>(payload: T | undefined): Message<T> {

@@ -11,6 +11,7 @@
   "dependencies": {
     "@ovc/common": "^1.0.0",
     "@prisma/client": "^4.4.0",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
@@ -18,6 +19,7 @@
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.12",
     "@types/debug": "^4.1.7",
     "@types/dotenv": "^8.2.0",

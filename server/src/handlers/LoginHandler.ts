@@ -1,4 +1,5 @@
 import {ERR, Message, OK} from '@ovc/common';
+import * as bcrypt from 'bcrypt';
 import {Request} from 'express';
 
 import {wait_ms} from '../Global';
@@ -19,10 +20,13 @@ export async function LoginHandler(req: Request): Promise<Message<string>> {
 
       let user = message.payload;
 
-      if (user.password === password) {
+      const isPasswordValid = bcrypt.compareSync(password, user.password);
+      console.log(isPasswordValid);
+
+      if (isPasswordValid) {
         // Update last login
         const update_message =
-            await UserService.Update({user, last_logon: new Date()});
+            await UserService.UpdateTimestamp(user);
         if (update_message.error) {
           return ERR(update_message.error);
         }

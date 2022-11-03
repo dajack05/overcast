@@ -1,4 +1,5 @@
 import {ERR, Message, OK, User} from '@ovc/common';
+import * as bcrypt from 'bcrypt'
 
 import {prisma} from '../Global'
 
@@ -18,7 +19,11 @@ export interface IUpdateUser {
 export class UserService {
   static async Create(args: ICreateUser): Promise<Message<Users>> {
     try {
-      const result = await prisma.users.create({data: args});
+      const final_args: ICreateUser = {
+        ...args,
+        password: bcrypt.hashSync(args.password, 10),
+      };
+      const result = await prisma.users.create({data: final_args});
       console.log('Created user', args);
       return OK(result);
     } catch (err) {
@@ -29,16 +34,36 @@ export class UserService {
 
   static async Update(args: IUpdateUser): Promise<Message<Users>> {
     try {
+      const final_args: IUpdateUser = {
+        ...args,
+        password: bcrypt.hashSync(args.password, 10),
+      };
       const result = await prisma.users.update({
         where: {email: args.user.email},
         data: {
-          dob: args.dob,
-          email: args.email,
-          first_name: args.first_name,
-          last_name: args.last_name,
-          last_logon: args.last_logon,
-          password: args.password,
-          permission_level: args.permission_level,
+          dob: final_args.dob,
+          email: final_args.email,
+          first_name: final_args.first_name,
+          last_name: final_args.last_name,
+          last_logon: final_args.last_logon,
+          password: final_args.password,
+          permission_level: final_args.permission_level,
+        }
+      });
+      return OK(result);
+    } catch (err) {
+      console.log('ERROR:' + err);
+      return ERR(err);
+    }
+  }
+
+  static async UpdateTimestamp(user:Users): Promise<Message<Users>> {
+    try {
+      const result = await prisma.users.update({
+        where: {email: user.email},
+        data: {
+          ...user,
+          last_logon: new Date(),
         }
       });
       return OK(result);
@@ -72,14 +97,14 @@ export class UserService {
     }
   }
 
-  static async FindById(id:number):Promise<Message<Users>>{
-    try{
-      const user = await prisma.users.findUnique({where:{id}});
-      if(user){
+  static async FindById(id: number): Promise<Message<Users>> {
+    try {
+      const user = await prisma.users.findUnique({where: {id}});
+      if (user) {
         return OK(user);
       }
-      return ERR("Failed to find user with id "+id);
-    }catch(err){
+      return ERR('Failed to find user with id ' + id);
+    } catch (err) {
       console.error(err);
       ERR(err);
     }
