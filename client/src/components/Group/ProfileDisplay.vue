@@ -99,7 +99,7 @@ async function remove() {
                     Members
                 </th>
                 <td>
-                    <button v-if="isAdmin && !disabled" @click="showAddUser" class="btn warning">Add Member</button>
+                    <button v-if="isAdmin && !disabled" @click="showAddUser" class="btn warning">Edit Membership</button>
                 </td>
             </tr>
             <tr>

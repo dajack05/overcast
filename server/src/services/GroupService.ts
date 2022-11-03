@@ -37,7 +37,7 @@ export class GroupService {
         data: {
           name: new_name,
           users: {
-            connect: users.map((u=>({email:u.email}))),
+            set: users.map((u => ({email: u.email}))),
           }
         }
       });

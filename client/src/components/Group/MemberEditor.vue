@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UserService } from '@/services/UserService';
 import type { Group, User } from '@ovc/common';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 defineEmits(['cancel']);
 
@@ -24,6 +24,11 @@ onMounted(async ()=>{
     console.log("Done...");
 });
 
+function isUserInGroup(user:User):boolean{
+    const u = props.group.users.find(_user=>_user.id === user.id);
+    return u !== undefined;
+}
+
 function addUser(user:User){
     props.group.users.push(user);
 }
@@ -45,9 +50,9 @@ function removeUser(user:User){
                     <p class="text-2xl text-black opacity-100">Add Member to {{ group.name }}</p>
                     <hr />
                     <div class="flex justify-between items-center" v-for="user, i in all_users" :key="i">
-                        <strong :class="{'line-through':group.users.includes(user)}" >{{ user.first_name }} {{ user.last_name }}</strong>
-                        <button v-if="!group.users.includes(user)" @click="addUser(user)" class="btn success">Add</button>
-                        <button v-if="group.users.includes(user)" @click="removeUser(user)" class="btn danger">Remove</button>
+                        <strong :class="{'line-through':isUserInGroup(user)}" >{{ user.first_name }} {{ user.last_name }}</strong>
+                        <button v-if="!isUserInGroup(user)" @click="addUser(user)" class="btn success">Add</button>
+                        <button v-if="isUserInGroup(user)" @click="removeUser(user)" class="btn danger">Remove</button>
                     </div>
                 </div>
             </div>

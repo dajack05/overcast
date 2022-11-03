@@ -1,3 +1,4 @@
+import { Users } from '.prisma/client';
 import {ERR, Group, Message, OK, UserPermission} from '@ovc/common';
 import {Request} from 'express';
 
@@ -34,10 +35,8 @@ export async function UpdateGroup(req: Request): Promise<Message<Group>> {
     return ERR(group.error);
   }
 
-
-  const users = group.payload.users;
-  const ids_to_add = user_ids.filter(id => users.find(u=>u.id === id) === undefined);
-  for (const id of ids_to_add) {
+  const users:Users[] = [];
+  for (const id of user_ids) {
     const u = await UserService.FindById(id);
     if (u.error) {
       console.error(u.error);
@@ -45,8 +44,6 @@ export async function UpdateGroup(req: Request): Promise<Message<Group>> {
       users.push(u.payload);
     }
   }
-
-  console.log(users);
   const result = await GroupService.Update(name, users, new_name);
 
   if (result.error) {
