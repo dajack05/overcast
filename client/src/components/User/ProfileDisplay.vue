@@ -17,8 +17,8 @@ const loading = ref(true);
 const error_msg = ref("");
 const disabled = ref(true);
 
-const userStore = useUserStore();
-const isAdmin = computed(() => userStore.isAdmin());
+const userstore = useUserStore();
+const isAdmin = computed(() => userstore.isAdmin());
 
 const localUser = ref<User>(JSON.parse(JSON.stringify(props.user)));
 watch(props, (newProps) => {
@@ -62,8 +62,8 @@ async function remove() {
 
         error_msg.value = "";
         const result = await UserService.Remove(localUser.value);
-        if(result.error){
-            error_msg.value = result.error;
+        if(result){
+            error_msg.value = result;
         }
         
         emit('change');
@@ -83,6 +83,12 @@ async function remove() {
                 <td class="flex">
                     <input :disabled="disabled" type="text" v-model="localUser.first_name" />
                     <input :disabled="disabled" type="text" v-model="localUser.last_name" />
+                </td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>
+                    <input :disabled="disabled" type="email" v-model="localUser.email" />
                 </td>
             </tr>
             <tr>

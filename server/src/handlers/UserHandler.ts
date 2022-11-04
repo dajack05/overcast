@@ -6,8 +6,8 @@ import {TokenManager} from '../Token';
 
 export async function UpdateUser(req: Request): Promise<Message<User>> {
   const token = req.body.token as string;
+  const id = req.body.id as string;
   const email = req.body.email as string;
-  const password = req.body.password as string;
   const dob = req.body.dob as string;
   const first_name = req.body.first_name as string;
   const last_name = req.body.last_name as string;
@@ -17,8 +17,8 @@ export async function UpdateUser(req: Request): Promise<Message<User>> {
     return ERR('Missing Token');
   }
 
-  if (!email) {
-    return ERR('Missing Email');
+  if (!id) {
+    return ERR('Missing User Id');
   }
 
   const token_data = TokenManager.Verify(token);
@@ -26,7 +26,7 @@ export async function UpdateUser(req: Request): Promise<Message<User>> {
     return ERR('Insufficient Permissons');
   }
 
-  const user = await UserService.FindByEmail(email);
+  const user = await UserService.FindById(Number.parseInt(id));
   if (user.error) {
     console.error(user.error);
     return ERR(user.error);
@@ -38,7 +38,8 @@ export async function UpdateUser(req: Request): Promise<Message<User>> {
     email: email ?? user.payload.email,
     first_name: first_name ?? user.payload.first_name,
     last_name: last_name ?? user.payload.last_name,
-    permission_level: permission_level ? Number.parseInt(permission_level) : user.payload.permission_level,
+    permission_level: permission_level ? Number.parseInt(permission_level) :
+                                         user.payload.permission_level,
   });
 
   if (result.error) {
@@ -129,18 +130,30 @@ export async function GetUser(req: Request): Promise<Message<User|User[]>> {
     return ERR('Invalid Token');
   }
 
-  const result = req.query.email ?
-      await UserService.FindByEmail(req.query.email as string) :
-      await UserService.GetAll();
+  const id = req.query.id as string;
+  const email = req.query.email as string;
+
+  if (id) {
+    const result = await UserService.FindById(Number.parseInt(id));
+    if (result.error) {
+      return result;
+    }
+    return OK(UserService.Sanitize(result.payload));
+  }
+
+  if (email) {
+    const result = await UserService.FindByEmail(email);
+    if (result.error) {
+      return result;
+    }
+    return OK(UserService.Sanitize(result.payload));
+  }
+
+  const result = await UserService.GetAll();
   if (result.error) {
-    console.error(result.error);
-    return ERR(result.error);
+    return result;
   }
+  console.log(result.payload);
 
-  if (Array.isArray(result.payload)) {
-    const sanitized_users = result.payload.map(u => UserService.Sanitize(u));
-    return OK(sanitized_users);
-  }
-
-  return OK(UserService.Sanitize(result.payload));
+  return OK((result.payload.map(u => UserService.Sanitize(u))));
 }

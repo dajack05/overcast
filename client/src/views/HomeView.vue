@@ -3,8 +3,8 @@ import { UserService } from '@/services/UserService';
 import { useUserStore } from '@/stores/user';
 import type { User } from '@ovc/common';
 import { onMounted, ref } from 'vue';
-import UserProfileDisplay from '../components/UserProfileDisplay.vue';
-import UserViewer from '../components/UserViewer.vue';
+import UserProfileDisplay from '../components/User/ProfileDisplay.vue';
+import UserViewer from '../components/User/Viewer.vue';
 import GroupViewer from '../components/Group/Viewer.vue';
 
 const userStore = useUserStore();

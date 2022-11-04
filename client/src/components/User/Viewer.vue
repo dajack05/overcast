@@ -2,7 +2,7 @@
 import { UserService } from '@/services/UserService';
 import type { User } from '@ovc/common';
 import { onMounted, ref } from "vue";
-import UserProfileDisplay from "./UserProfileDisplay.vue";
+import UserProfileDisplay from "./ProfileDisplay.vue";
 
 const all_users = ref<User[]>();
 

@@ -4,16 +4,16 @@ import jwt from 'jsonwebtoken';
 import {Users} from '.prisma/client';
 
 export interface TokenData {
-  email: string;
-  permission_level: UserPermission;
+  id: number
+  permission_level:UserPermission
 }
 
 export class TokenManager {
   static Generate(user: Users): string {
     return jwt.sign(
         {
-          email: user.email,
-          permission_level: user.permission_level,
+          id: user.id,
+          permission_level:user.permission_level,
         } as TokenData,
         process.env.JWT_SECRET);
   }

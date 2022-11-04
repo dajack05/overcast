@@ -31,9 +31,10 @@ function logout() {
                 {{ userStore.user.last_name }}</p>
             <p v-if="!loggedIn" class="text-2xl text-center">Welcome</p>
             <div v-if="loggedIn" class="flex justify-center gap-2">
-                <RouterLink class="btn" to="/">Home</RouterLink>
-                <RouterLink v-if="isAdmin" class="btn" to="/register">Register User</RouterLink>
-                <RouterLink v-if="isAdmin" class="btn" to="/register_group">Register Group</RouterLink>
+                <RouterLink class="w-1/3 text-center btn" to="/">Home</RouterLink>
+                <RouterLink class="w-1/3 text-center btn" to="/register" v-if="isAdmin">Register User</RouterLink>
+                <RouterLink class="w-1/3 text-center btn" to="/register_group" v-if="isAdmin">Register Group
+                </RouterLink>
             </div>
         </div>
         <div class="w-1/4 flex justify-end">

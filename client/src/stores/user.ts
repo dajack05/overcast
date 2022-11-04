@@ -1,20 +1,18 @@
-import { User, UserPermission} from "@ovc/common";
-import { defineStore } from "pinia";
-import { ref } from "vue";
-import { useCookies } from "vue3-cookies";
-import jwtDecode from "jwt-decode";
-import { UserService } from "@/services/UserService";
+import {UserService} from '@/services/UserService';
+import {User, UserPermission} from '@ovc/common';
+import jwtDecode from 'jwt-decode';
+import {defineStore} from 'pinia';
+import {ref} from 'vue';
+import {useCookies} from 'vue3-cookies';
 
-export const useUserStore = defineStore("user", () => {
-  const token = ref("");
+export const useUserStore = defineStore('user', () => {
+  const token = ref('');
   const user = ref<User>(new User());
 
   const cookies = useCookies();
 
   async function Login(
-    email: string,
-    password: string
-  ): Promise<string | undefined> {
+      email: string, password: string): Promise<string|undefined> {
     {
       const result = await UserService.Login(email, password);
       if (result.error) {
@@ -23,13 +21,13 @@ export const useUserStore = defineStore("user", () => {
 
       // We got a token!
       token.value = result.payload as string;
-      cookies.cookies.set("token", token.value, "1m");
+      cookies.cookies.set('token', token.value, '1m');
       user.value.email = email;
     }
 
     // Now get the user
     const result = await fetchUser();
-    if (typeof result === "string") {
+    if (typeof result === 'string') {
       console.error(result);
     }
 
@@ -37,22 +35,22 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function Logout() {
-    token.value = "";
+    token.value = '';
     user.value = new User();
-    cookies.cookies.remove("token");
+    cookies.cookies.remove('token');
   }
 
   /**
    * Returns the user or error strings if not logged in
    */
-  async function fetchUser(): Promise<User | string> {
+  async function fetchUser(): Promise<User|string> {
     if (!isLoggedIn()) {
-      return "User Not Logged In";
+      return 'User Not Logged In';
     }
 
     if (!isUserPopulated()) {
-      const result = await UserService.GetByEmail(user.value.email);
-      if (typeof result == "string") {
+      const result = await UserService.GetById(user.value.id);
+      if (typeof result == 'string') {
         return result;
       }
 
@@ -63,7 +61,7 @@ export const useUserStore = defineStore("user", () => {
   }
 
   const isUserPopulated = () =>
-    user.value.first_name.length > 0 && user.value.last_name.length > 0;
+      user.value.first_name.length > 0 && user.value.last_name.length > 0;
 
   function isLoggedIn(): boolean {
     if (token.value.length > 0) {
@@ -71,22 +69,22 @@ export const useUserStore = defineStore("user", () => {
     }
 
     // Do we have a token cookie?
-    if (cookies.cookies.isKey("token")) {
-      const cookie_token = cookies.cookies.get("token");
+    if (cookies.cookies.isKey('token')) {
+      const cookie_token = cookies.cookies.get('token');
 
       // Is it semi-valid?
       if (cookie_token.length > 0) {
         // Can we get the email from within it?
-        const decoded = jwtDecode<{ email: string; iat: number }>(cookie_token);
-        if (!decoded || !decoded.email) {
+        const decoded = jwtDecode<{id: number; iat: number}>(cookie_token);
+        if (!decoded || !decoded.id) {
           return false;
         }
 
         token.value = cookie_token;
-        user.value.email = decoded.email;
+        user.value.id = decoded.id;
 
         fetchUser().then((v) => {
-          if (typeof v === "string") {
+          if (typeof v === 'string') {
             console.error(v);
           }
         });
@@ -97,8 +95,9 @@ export const useUserStore = defineStore("user", () => {
     return false;
   }
 
-  const isAdmin = () =>
-    isLoggedIn() && user.value.permission_level === UserPermission.ADMIN;
+  function isAdmin() {
+    return isLoggedIn() && user.value.permission_level === UserPermission.ADMIN;
+  }
 
   return {
     Login,

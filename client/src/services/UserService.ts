@@ -42,6 +42,29 @@ export class UserService {
     return message.payload as User[];
   }
 
+  static async GetById(id:number):Promise<User|string>{
+    const userStore = useUserStore();
+    if (!userStore.isLoggedIn()) {
+      return 'User Not Logged In';
+    }
+
+    const response = await axios.get(`${SERVER}/user`, {
+      params: {
+        token: userStore.token,
+        id,
+      },
+    });
+
+    const message = response.data as Message<User>;
+    if (message.error) {
+      return message.error;
+    }
+
+    // Got user
+    const user = message.payload as User;
+    return user;
+  }
+
   static async GetByEmail(email: string): Promise<User|string> {
     const userStore = useUserStore();
     if (!userStore.isLoggedIn()) {
