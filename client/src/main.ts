@@ -4,7 +4,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-import './style.css'
+import './style.scss'
 
 import { globalCookiesConfig } from 'vue3-cookies'
 

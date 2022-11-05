@@ -3,9 +3,9 @@ import { UserService } from '@/services/UserService';
 import { useUserStore } from '@/stores/user';
 import type { User } from '@ovc/common';
 import { onMounted, ref } from 'vue';
-import UserProfileDisplay from '../components/User/ProfileDisplay.vue';
 import UserViewer from '../components/User/Viewer.vue';
 import GroupViewer from '../components/Group/Viewer.vue';
+import EmailControlPanel from '@/components/Email/ControlPanel.vue';
 
 const userStore = useUserStore();
 
@@ -38,6 +38,7 @@ async function getAll(){
       <!-- <UserProfileDisplay @change="onProfileChange" v-for="user,i in allUsers" :key="i" :user="user" /> -->
       <UserViewer />
       <GroupViewer />
+      <EmailControlPanel />
     </div>
   </main>
 </template>

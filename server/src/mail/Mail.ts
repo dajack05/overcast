@@ -12,6 +12,7 @@ const mail = nodemailer.createTransport({
 });
 
 export function SendEmail(from: string, to: string, body: string) {
+  console.log("Sending...",from,to,body);
   mail.verify(function(error, _) {
     if (error) {
       console.log(error);

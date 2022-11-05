@@ -25,22 +25,26 @@ function logout() {
             <p class="text-3xl font-bold font-serif cursor-pointer w-fit hover:underline" @click="goHome">Overcast</p>
             <p class="italic text-sm">v0.1.0</p>
         </div>
-        <div class="w-1/2 flex flex-col">
+        <div v-if="loggedIn" class="w-1/2 flex flex-col justify-center">
             <!-- Center -->
-            <p v-if="loggedIn" class="text-2xl text-center">Welcome {{ userStore.user.first_name }}
-                {{ userStore.user.last_name }}</p>
-            <p v-if="!loggedIn" class="text-2xl text-center">Welcome</p>
-            <div v-if="loggedIn" class="flex justify-center gap-2">
-                <RouterLink class="w-1/3 text-center btn" to="/">Home</RouterLink>
-                <RouterLink class="w-1/3 text-center btn" to="/register" v-if="isAdmin">Register User</RouterLink>
-                <RouterLink class="w-1/3 text-center btn" to="/register_group" v-if="isAdmin">Register Group
-                </RouterLink>
-            </div>
+            <p class="text-2xl text-center">Welcome {{ userStore.user.first_name }}</p>
+            <ul class="flex justify-center items-baseline">
+                <li class="mr-6">
+                    <RouterLink to="/" class="text-blue-500 hover:text-blue-800">Home</RouterLink>
+                </li>
+                <li v-if="isAdmin" class="mr-6">
+                    <RouterLink to="register" class="text-blue-500 hover:text-blue-800">Register User</RouterLink>
+                </li>
+                <li v-if="isAdmin" class="mr-6">
+                    <RouterLink to="register_group" class="text-blue-500 hover:text-blue-800">Register Group
+                    </RouterLink>
+                </li>
+            </ul>
         </div>
-        <div class="w-1/4 flex justify-end">
+        <div v-if="loggedIn" class="w-1/4 flex justify-end">
             <!-- Right -->
             <div>
-                <button v-if="loggedIn" @click="logout" class="btn danger">Logout</button>
+                <button @click="logout" class="btn danger">Logout</button>
             </div>
         </div>
     </nav>

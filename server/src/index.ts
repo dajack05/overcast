@@ -6,6 +6,7 @@ import body_parser from 'body-parser';
 import {LoginHandler} from './handlers/LoginHandler';
 import {GetUser, UpdateUser, CreateUser, RemoveUser} from './handlers/UserHandler';
 import {CreateGroup, GetGroup, RemoveGroup, UpdateGroup} from './handlers/GroupHandler';
+import{SendEmail} from './mail/Mail'
 
 dotenv.config();
 
@@ -29,6 +30,15 @@ app.get('/group', async (req, res) => res.send(await GetGroup(req)));
 app.post('/group', async (req, res) => res.send(await UpdateGroup(req)));
 app.put('/group', async (req, res) => res.send(await CreateGroup(req)));
 app.delete('/group', async (req, res) => res.send(await RemoveGroup(req)));
+
+app.get('/mail/send',(req,res)=>{
+  const address = req.query.to as string;
+  console.log(req.params);
+  if(address){
+    SendEmail("dajack05@gmail.com", address, "Hello Mario");
+  }
+  res.send("OK");
+});
 
 app.listen(process.env.PORT, () => {
   console.log('Let\'s a-go!!! Running on port ' + process.env.PORT);
