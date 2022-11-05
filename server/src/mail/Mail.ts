@@ -1,3 +1,4 @@
+import {urlencoded} from 'body-parser';
 import nodemailer from 'nodemailer'
 
 const mail = nodemailer.createTransport({
@@ -12,18 +13,19 @@ const mail = nodemailer.createTransport({
 });
 
 export function SendEmail(from: string, to: string, body: string) {
-  console.log("Sending...",from,to,body);
   mail.verify(function(error, _) {
     if (error) {
       console.log(error);
     } else {
-        mail.sendMail({
+      mail.sendMail(
+          {
             to,
             from,
-            text:body,
-        },(err,info)=>{
-            console.log(err,info);
-        })
+            html: body,
+          },
+          (err, info) => {
+            console.log(err, info);
+          })
     }
   });
 }

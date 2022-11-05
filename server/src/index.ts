@@ -33,11 +33,12 @@ app.delete('/group', async (req, res) => res.send(await RemoveGroup(req)));
 
 app.get('/mail/send',(req,res)=>{
   const address = req.query.to as string;
-  console.log(req.params);
+  const parts = address.split('@');
   if(address){
-    SendEmail("dajack05@gmail.com", address, "Hello Mario");
+    SendEmail("dajack05@gmail.com", `dajack05+${parts[0]}@gmail.com`, "<b>Hello</b> Mario");
+    res.send("OK");
   }
-  res.send("OK");
+  res.send("No Address");
 });
 
 app.listen(process.env.PORT, () => {

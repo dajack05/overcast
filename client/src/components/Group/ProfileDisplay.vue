@@ -4,8 +4,8 @@ import { UserService } from '@/services/UserService';
 import { useUserStore } from '@/stores/user';
 import type { Group, User } from '@ovc/common';
 import { computed } from '@vue/reactivity';
-import { ref, watch } from 'vue';
-import MemberEditor from './MemberEditor.vue';
+import { onMounted, ref, watch } from 'vue';
+import MemberEditor from './MemberSelector.vue';
 
 export interface UserProfileProps {
     group: Group
@@ -24,10 +24,21 @@ const isAdmin = computed(() => userStore.isAdmin());
 
 const add_member_shown = ref(false);
 
+const all_users = ref<User[]>([])
+
 const localGroup = ref<Group>(JSON.parse(JSON.stringify(props.group)));
 watch(props, (newProps) => {
     localGroup.value = JSON.parse(JSON.stringify(newProps.group));
 })
+
+onMounted(async () => {
+    const result = await UserService.GetAll();
+    if (typeof (result) === 'string') {
+        error_msg.value = result;
+    } else {
+        all_users.value = result;
+    }
+});
 
 async function showAddUser() {
     add_member_shown.value = true;
@@ -82,6 +93,10 @@ async function remove() {
     }
 }
 
+function updateUsers(users:User[]){
+    localGroup.value.users = users;
+}
+
 </script>
 
 <template>
@@ -99,7 +114,8 @@ async function remove() {
                     Members
                 </th>
                 <td>
-                    <button v-if="isAdmin && !disabled" @click="showAddUser" class="btn warning">Edit Membership</button>
+                    <button v-if="isAdmin && !disabled" @click="showAddUser" class="btn warning">Edit
+                        Membership</button>
                 </td>
             </tr>
             <tr>
@@ -116,6 +132,7 @@ async function remove() {
         <button v-if="isAdmin && !disabled" @click="save" class="btn success">Save</button>
         <button v-if="isAdmin && !disabled" @click="remove" class="btn danger">Delete</button>
 
-        <MemberEditor v-if="add_member_shown" @cancel="add_member_shown = false" :group="localGroup" />
+        <MemberEditor @submit="updateUsers" :user-pool="all_users" :pre-selected="localGroup.users" v-if="add_member_shown"
+            @cancel="add_member_shown = false" />
     </div>
 </template>
