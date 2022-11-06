@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { User } from '@ovc/common';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 defineEmits<{
     (e: 'cancel'): void
@@ -12,8 +12,7 @@ const props = defineProps<{
     preSelected?: User[],
 }>();
 
-const localPreselected = props.preSelected?.map(u=>u);
-const selectedUsers = ref<User[]>(localPreselected ?? []);
+const selectedUsers = ref<User[]>([]);
 
 function isSelected(user: User): boolean {
     const result = selectedUsers.value.find(u => u.id === user.id);
