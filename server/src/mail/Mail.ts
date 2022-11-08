@@ -12,20 +12,33 @@ const mail = nodemailer.createTransport({
   },
 });
 
-export function SendEmail(from: string, to: string, body: string) {
+export function SendEmail(
+    from: string, to: string, body: string, is_html = false) {
   mail.verify(function(error, _) {
     if (error) {
       console.log(error);
     } else {
-      mail.sendMail(
-          {
-            to,
-            from,
-            html: body,
-          },
-          (err, info) => {
-            console.log(err, info);
-          })
+      if (is_html) {
+        mail.sendMail(
+            {
+              to,
+              from,
+              html: body,
+            },
+            (err, info) => {
+              console.log(err, info);
+            })
+      } else {
+        mail.sendMail(
+            {
+              to,
+              from,
+              text: body,
+            },
+            (err, info) => {
+              console.log(err, info);
+            })
+      }
     }
   });
 }

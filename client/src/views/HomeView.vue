@@ -6,18 +6,18 @@ import { onMounted, ref } from 'vue';
 import UserViewer from '../components/User/Viewer.vue';
 import GroupViewer from '../components/Group/Viewer.vue';
 import EmailControlPanel from '@/components/Email/ControlPanel.vue';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
 
 const allUsers = ref<User[]>([]);
 
 onMounted(async ()=>{
+  if(!userStore.isLoggedIn()){
+    useRouter().push("/login");
+  }
   await getAll();
 })
-
-async function onProfileChange(){
-  await getAll();
-}
 
 async function getAll(){
   const _allUsers = await UserService.GetAll();
@@ -35,7 +35,6 @@ async function getAll(){
     <RouterLink v-if="!userStore.isLoggedIn()" class="btn text-2xl" to="/login">Login</RouterLink>
     <div class="flex flex-wrap" v-if="userStore.isLoggedIn()">
       <!-- Logged In Info -->
-      <!-- <UserProfileDisplay @change="onProfileChange" v-for="user,i in allUsers" :key="i" :user="user" /> -->
       <UserViewer />
       <GroupViewer />
       <EmailControlPanel />

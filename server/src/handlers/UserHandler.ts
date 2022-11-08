@@ -153,7 +153,6 @@ export async function GetUser(req: Request): Promise<Message<User|User[]>> {
   if (result.error) {
     return result;
   }
-  console.log(result.payload);
 
   return OK((result.payload.map(u => UserService.Sanitize(u))));
 }
