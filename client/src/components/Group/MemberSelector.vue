@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { User } from '@ovc/common';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 
 defineEmits<{
     (e: 'cancel'): void
@@ -14,17 +14,30 @@ const props = defineProps<{
 
 const selectedUsers = ref<User[]>([]);
 
+onMounted(()=>{
+    if(props.preSelected !== undefined){
+        selectedUsers.value = props.preSelected.map(u=>u);
+    }else{
+        selectedUsers.value = [];
+    }
+});
+
 function isSelected(user: User): boolean {
-    const result = selectedUsers.value.find(u => u.id === user.id);
-    return result !== undefined;
+    for(const muser of selectedUsers.value){
+        if(muser.id === user.id){
+            return true;
+        }
+    }
+    return false;
 }
 
 function toggle(user: User) {
     console.log(selectedUsers.value);
-    if (selectedUsers.value.includes(user))
-        selectedUsers.value.splice(selectedUsers.value.indexOf(user), 1);
+    if (isSelected(user))
+    selectedUsers.value = selectedUsers.value.filter(u=>u.id!==user.id);
     else
         selectedUsers.value.push(user);
+    console.log(selectedUsers.value);
 }
 </script>
 <template>
