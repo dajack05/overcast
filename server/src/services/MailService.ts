@@ -1,5 +1,4 @@
-import { User } from '@ovc/common';
-import e from 'express';
+import { Users } from '.prisma/client';
 import nodemailer from 'nodemailer'
 
 const mail = nodemailer.createTransport({
@@ -14,7 +13,7 @@ const mail = nodemailer.createTransport({
   });
 
 export class MailService{
-    static SendTemplatedEmail(template:string, to:string, user:User){
+    static SendTemplatedEmail(template:string, to:string){
       mail.verify(err=>{
         if(err){
           console.error(err);

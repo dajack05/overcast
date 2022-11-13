@@ -3,7 +3,7 @@ export interface Message<T> {
   payload?: T;
 }
 
-export function OK<T>(payload: T | undefined): Message<T> {
+export function OK<T>(payload?: T|undefined): Message<T> {
   return {
     error: undefined,
     payload,

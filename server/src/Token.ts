@@ -10,12 +10,14 @@ export interface TokenData {
 
 export class TokenManager {
   static Generate(user: Users): string {
-    return jwt.sign(
-        {
-          id: user.id,
-          permission_level:user.permission_level,
-        } as TokenData,
-        process.env.JWT_SECRET);
+    const token = jwt.sign(
+      {
+        id: user.id,
+        permission_level:user.permission_level,
+      } as TokenData,
+      process.env.JWT_SECRET);
+      console.info(token);
+    return token;
   }
 
   static Verify(token: string): TokenData|null {
