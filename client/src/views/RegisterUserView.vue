@@ -36,6 +36,8 @@ async function register() {
         const result = await UserService.Register(email.value, password.value, dob.value, first_name.value, last_name.value);
         if (result) {
             error_msg.value = result;
+        }else{
+            email.value = password.value = password_confirm.value = dob.value = first_name.value = last_name.value = "";
         }
     }
 

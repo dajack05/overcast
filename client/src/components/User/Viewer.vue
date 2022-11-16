@@ -15,7 +15,7 @@ onMounted(async ()=>{
 </script>
 
 <template>
-    <div class="border rounded-md">
+    <div class="border rounded-md w-5/12 min-w-[300px]">
         <p class="text-2xl">All Users</p>
         <div>
             <UserProfileDisplay v-for="user,i in all_users" :key="i" :user="user" />

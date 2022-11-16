@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "@ovc/client",
+			"path": "client"
+		},
+		{
+			"name": "📦 @ovc/common",
+			"path": "common"
+		},
+		{
+			"name": "@ovc/server",
+			"path": "server"
+		}
+	],
+	"settings": {}
+}

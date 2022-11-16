@@ -33,7 +33,7 @@ async function getAll(){
 <template>
   <main class="text-center m-10">
     <RouterLink v-if="!userStore.isLoggedIn()" class="btn text-2xl" to="/login">Login</RouterLink>
-    <div class="flex flex-wrap" v-if="userStore.isLoggedIn()">
+    <div class="flex flex-wrap justify-around" v-if="userStore.isLoggedIn()">
       <!-- Logged In Info -->
       <UserViewer />
       <GroupViewer />
