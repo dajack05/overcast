@@ -124,19 +124,19 @@ function updateUsers(users: User[]) {
                         Members
                     </th>
                     <td>
-                        <button v-if="isAdmin && !disabled" @click="showAddUser" class="btn warning">Edit
-                            Membership</button>
-                    </td>
-                </tr>
-                <tr>
-                    <th></th>
-                    <td>
-                        <ul class="list-disc text-left px-2">
-                            <li v-for="user, i in localGroup.users" :key="i">{{ user.first_name }}</li>
-                        </ul>
+                        <button v-if="isAdmin && !disabled" @click="showAddUser" class="btn warning">
+                            Edit Membership
+                        </button>
                     </td>
                 </tr>
             </table>
+
+            <div class="flex flex-wrap justify-center">
+                <label class="px-3 border rounded-full" v-for="user, i in localGroup.users" :key="i">
+                    {{ user.first_name }} {{ user.last_name[0] }}
+                </label>
+            </div>
+
             <button v-if="isAdmin && disabled" @click="edit" class="btn warning">Edit</button>
             <button v-if="isAdmin && !disabled" @click="cancel" class="btn warning">Cancel</button>
             <button v-if="isAdmin && !disabled" @click="save" class="btn success">Save</button>

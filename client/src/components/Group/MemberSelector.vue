@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { User } from '@ovc/common';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 defineEmits<{
     (e: 'cancel'): void
@@ -13,18 +13,24 @@ const props = defineProps<{
 }>();
 
 const selectedUsers = ref<User[]>([]);
+const remainingUsers = ref<User[]>([]);
 
-onMounted(()=>{
-    if(props.preSelected !== undefined){
-        selectedUsers.value = props.preSelected.map(u=>u);
-    }else{
+watch(selectedUsers, newUsers=>{
+    remainingUsers.value = props.userPool.filter(u=>newUsers.includes(u));
+});
+
+onMounted(() => {
+    if (props.preSelected !== undefined) {
+        selectedUsers.value = props.preSelected.map(u => u);
+        remainingUsers.value = props.userPool.map(u=>u);
+    } else {
         selectedUsers.value = [];
     }
 });
 
 function isSelected(user: User): boolean {
-    for(const muser of selectedUsers.value){
-        if(muser.id === user.id){
+    for (const muser of selectedUsers.value) {
+        if (muser.id === user.id) {
             return true;
         }
     }
@@ -34,7 +40,7 @@ function isSelected(user: User): boolean {
 function toggle(user: User) {
     console.log(selectedUsers.value);
     if (isSelected(user))
-    selectedUsers.value = selectedUsers.value.filter(u=>u.id!==user.id);
+        selectedUsers.value = selectedUsers.value.filter(u => u.id !== user.id);
     else
         selectedUsers.value.push(user);
     console.log(selectedUsers.value);
@@ -49,9 +55,11 @@ function toggle(user: User) {
                 <div class="flex flex-row-reverse">
                     <button @click="$emit('cancel')" class="btn danger">X</button>
                 </div>
-                <div class="flex justify-between items-center gap-2" v-for="user, i in userPool" :key="i">
-                    <strong :class="{ 'line-through': isSelected(user) }">{{ user.first_name }} {{ user.last_name
-                    }}</strong>
+                <div>
+                    <label v-for="user, i in selectedUsers" :key="i">{{ user.first_name }} {{ user.last_name[0] }}</label>
+                </div>
+                <div class="flex justify-between items-center gap-2" v-for="user, i in remainingUsers" :key="i">
+                    <strong>{{ user.first_name }} {{ user.last_name}}</strong>
                     <button @click="toggle(user)" class="btn"
                         :class="{ 'success': !isSelected(user), 'danger': isSelected(user) }">{{ isSelected(user) ? "X"
                                 : "+"
