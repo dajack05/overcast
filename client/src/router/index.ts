@@ -24,6 +24,11 @@ const router = createRouter({
       name: 'register_group',
       component: () => import('../views/RegisterGroup.vue')
     },
+    {
+      path: '/email',
+      name: 'email',
+      component: () => import('../views/EmailView.vue')
+    },
   ]
 })
 
