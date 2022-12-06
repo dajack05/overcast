@@ -1,4 +1,4 @@
-const cors = require('cors');
+import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import {Request, Response} from 'express-serve-static-core';
@@ -6,8 +6,7 @@ import body_parser from 'body-parser';
 import {LoginHandler} from './handlers/LoginHandler';
 import {GetUser, UpdateUser, CreateUser, RemoveUser} from './handlers/UserHandler';
 import {CreateGroup, GetGroup, RemoveGroup, UpdateGroup} from './handlers/GroupHandler';
-import{SendEmail} from './mail/Mail'
-import { SendWelcomeEmail } from './handlers/MailHandler';
+import { SendRawEmail, SendWelcomeEmail } from './handlers/MailHandler';
 
 dotenv.config();
 
@@ -33,6 +32,7 @@ app.put('/group', async (req, res) => res.send(await CreateGroup(req)));
 app.delete('/group', async (req, res) => res.send(await RemoveGroup(req)));
 
 app.post('/mail/welcome', async (req,res) => res.send(await SendWelcomeEmail(req)));
+app.post('/mail/custom', async (req,res) => res.send(await SendRawEmail(req)));
 
 app.listen(process.env.PORT, () => {
   console.log('Let\'s a-go!!! Running on port ' + process.env.PORT);

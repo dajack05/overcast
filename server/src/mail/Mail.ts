@@ -1,5 +1,6 @@
 import {urlencoded} from 'body-parser';
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
+import { type } from 'os';
 
 const mail = nodemailer.createTransport({
   pool: true,

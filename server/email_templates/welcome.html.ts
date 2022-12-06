@@ -1,6 +1,6 @@
 import { Users } from ".prisma/client";
 
-export const email = (user:Users)=>`
+export const WelcomeEmailTemplate = (user: Users) => `
 <h1>Welcome To Overcast!</h1>
 <p>Hi ${user.first_name},</p>
 <p>You've been registered and you're almost done.</p>
