@@ -38,7 +38,7 @@ export async function SendWelcomeEmail(
   return OK(true);
 }
 
-export async function SendRawEmail(req: Request): Promise<Message<boolean>> {
+export async function SendRawEmail(req: Request): Promise<Message<string>> {
   const token = req.body.token as string;
   const email_address = req.body.email as string;
   const subject = req.body.subject as string;
@@ -58,9 +58,11 @@ export async function SendRawEmail(req: Request): Promise<Message<boolean>> {
     return ERR("Failed to find user");
   }
 
+  let message:Message<string>;
+
   if (html != undefined && html.length > 0) {
     // Send raw HTML
-    MailService.Send(html, subject, user.payload.email);
+    message = await MailService.Send(html, subject, user.payload.email);
   } else {
     if (text == undefined || text.length <= 0) {
       return ERR("No html or text provided.");
@@ -76,8 +78,8 @@ export async function SendRawEmail(req: Request): Promise<Message<boolean>> {
     console.log(html_text);
 
     // Send text
-    MailService.Send(html_text, subject,  user.payload.email);
+    message = await MailService.Send(html_text, subject,  user.payload.email);
   }
 
-  return OK(true);
+  return message;
 }

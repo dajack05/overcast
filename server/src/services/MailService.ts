@@ -1,6 +1,9 @@
+import { ERR, Message, OK } from "@ovc/common";
+import { config } from "dotenv";
 import nodemailer from "nodemailer";
 import { IsDev } from "../Global";
 
+config();
 const mail = nodemailer.createTransport({
   pool: true,
   host: process.env.SMTP_HOST,
@@ -13,7 +16,11 @@ const mail = nodemailer.createTransport({
 });
 
 export class MailService {
-  static Send(html: string, subject: string, to: string) {
+  static async Send(
+    html: string,
+    subject: string,
+    to: string | string[]
+  ): Promise<Message<string>> {
     let email = to;
 
     if (IsDev()) {
@@ -22,24 +29,18 @@ export class MailService {
       subject = `<${to}>${subject}`;
     }
 
-    mail.verify((err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
+    try {
+      await mail.sendMail({
+        to: email,
+        subject: subject,
+        from: "admin@overcast.com",
+        html: html,
+      });
+    } catch (error) {
+      console.error(error);
+      return ERR(error);
+    }
 
-      mail.sendMail(
-        {
-          to: email,
-          subject: subject,
-          from: "admin@overcast.com",
-          html: html,
-        },
-        (err, info) => {
-          console.error(err, info);
-          return;
-        }
-      );
-    });
+    return OK();
   }
 }
