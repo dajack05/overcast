@@ -6,7 +6,7 @@ import { onMounted, ref } from 'vue';
 
 const all_users = ref<User[]>([]);
 
-const selected_user_email = ref<string>("");
+const selected_user = ref<User>();
 const text_content = ref<string>("");
 const subject = ref<string>("");
 
@@ -20,15 +20,24 @@ onMounted(async () => {
     }
 });
 
+function parse(input:string, user:User) {
+    return eval(input);
+}
+
 async function submit() {
     error_msg.value = "";
     const error = await (async (): Promise<string | undefined> => {
-        if (is_text_mode.value) {
-            return await EmailService.SendText(text_content.value, subject.value, selected_user_email.value);
-        } else {
-            return await EmailService.SendHTML(text_content.value, subject.value, selected_user_email.value);
+
+        // Replace drop-ins
+
+        if(!selected_user.value){
+            return "No User Selected";
         }
-        return undefined;
+        if (is_text_mode.value) {
+            return await EmailService.SendText(text_content.value, subject.value, selected_user.value.email);
+        } else {
+            return await EmailService.SendHTML(text_content.value, subject.value, selected_user.value.email);
+        }
     })();
     if (error) {
         error_msg.value = error;
@@ -45,8 +54,8 @@ async function submit() {
             <form @submit.prevent="submit">
                 <div>
                     <label>To</label>
-                    <select v-model="selected_user_email" required>
-                        <option v-for="user, i in all_users" :key="i" :value="user.email">{{ user.first_name }}
+                    <select v-model="selected_user" required>
+                        <option v-for="user, i in all_users" :key="i" :value="user">{{ user.first_name }}
                             {{ user.last_name }}</option>
                     </select>
                 </div>
@@ -67,9 +76,11 @@ async function submit() {
                         </div>
                     </div>
                     <textarea class="transition-colors"
-                        :class="{'bg-green-50':is_text_mode, 'bg-orange-50':!is_text_mode}" v-model="text_content"
+                        :class="{ 'bg-green-50': is_text_mode, 'bg-orange-50': !is_text_mode }" v-model="text_content"
                         cols="64" rows="16" required></textarea>
                 </div>
+
+                <button @click="parse(text_content, selected_user)" class="btn" type="button">Parse</button>
 
                 <input type="submit" class="btn" value="Send it!" />
             </form>
