@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UserService } from '@/services/UserService';
 import { useUserStore } from '@/stores/user';
-import { UserPermission } from '@ovc/common';
+import { UserType } from '@ovc/common';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -19,7 +19,7 @@ const last_name = ref("");
 const userStore = useUserStore();
 
 onMounted(() => {
-    if (!userStore.isLoggedIn() || userStore.user.permission_level !== UserPermission.ADMIN) {
+    if (!userStore.isLoggedIn() || userStore.user.permission_level !== UserType.ADMIN) {
         // See ya!
         useRouter().push("/");
     }

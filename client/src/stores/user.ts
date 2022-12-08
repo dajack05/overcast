@@ -1,5 +1,5 @@
 import {UserService} from '@/services/UserService';
-import {User, UserPermission} from '@ovc/common';
+import {User, UserType} from '@ovc/common';
 import jwtDecode from 'jwt-decode';
 import {defineStore} from 'pinia';
 import {ref} from 'vue';
@@ -96,7 +96,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function isAdmin() {
-    return isLoggedIn() && user.value.permission_level === UserPermission.ADMIN;
+    return isLoggedIn() && user.value.permission_level === UserType.ADMIN;
   }
 
   return {

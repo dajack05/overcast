@@ -67,7 +67,8 @@ async function submit() {
     <div class="flex justify-center items-center">
         <div class="p-4 rounded border">
             <h1 class="text-4xl">Email</h1>
-            <p class="text-red-500 font-bold">{{ error_msg }}</p>
+            <hr/>
+            <p class="m-4 text-red-500 font-bold">{{ error_msg }}</p>
             <form class="flex flex-col gap-2" @submit.prevent="submit">
                 <div class="flex gap-2">
                     <div>

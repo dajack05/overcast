@@ -39,6 +39,10 @@ function logout() {
                     <RouterLink to="register_group" class="text-blue-500 hover:text-blue-800">Register Group
                     </RouterLink>
                 </li>
+                <li v-if="isAdmin" class="mr-6">
+                    <RouterLink to="email" class="text-blue-500 hover:text-blue-800">Email
+                    </RouterLink>
+                </li>
             </ul>
         </div>
         <div v-if="loggedIn" class="w-1/4 flex justify-end">

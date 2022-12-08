@@ -1,7 +1,7 @@
-export enum UserPermission {
-  USER,
+export enum UserType {
+  DATA,
+  VIEWER,
   ADMIN,
-  COUNT,
 }
 
 export class User {
@@ -10,5 +10,5 @@ export class User {
   last_name = '';
   email = '';
   dob = '';
-  permission_level: UserPermission = UserPermission.USER;
+  permission_level = UserType.DATA;
 }

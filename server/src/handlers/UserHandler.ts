@@ -1,4 +1,4 @@
-import {ERR, Message, OK, User, UserPermission} from '@ovc/common';
+import {ERR, Message, OK, User, UserType} from '@ovc/common';
 import {Request} from 'express';
 
 import {UserService} from '../services/UserService';
@@ -22,7 +22,7 @@ export async function UpdateUser(req: Request): Promise<Message<User>> {
   }
 
   const token_data = TokenManager.Verify(token);
-  if (!token_data || token_data.permission_level !== UserPermission.ADMIN) {
+  if (!token_data || token_data.user_type !== UserType.ADMIN) {
     return ERR('Insufficient Permissons');
   }
 
@@ -85,7 +85,7 @@ export async function CreateUser(req: Request): Promise<Message<User>> {
 
   const token_data = TokenManager.Verify(token as string);
 
-  if (!token_data || token_data.permission_level !== UserPermission.ADMIN) {
+  if (!token_data || token_data.user_type !== UserType.ADMIN) {
     return ERR('Invalid Token');
   }
 
@@ -110,7 +110,7 @@ export async function RemoveUser(req: Request): Promise<Message<any>> {
 
   const token_data = TokenManager.Verify(token as string);
 
-  if (!token_data || token_data.permission_level !== UserPermission.ADMIN) {
+  if (!token_data || token_data.user_type !== UserType.ADMIN) {
     return ERR('Invalid Token');
   }
 

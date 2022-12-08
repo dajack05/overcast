@@ -1,9 +1,10 @@
-import { ERR, Message, OK, UserPermission } from "@ovc/common";
+import { ERR, Message, OK, UserType } from "@ovc/common";
 import { Request } from "express";
 import { MailService } from "../services/MailService";
 import { TokenManager } from "../Token";
 import { WelcomeEmailTemplate } from "../../email_templates/welcome.html";
 import { UserService } from "../services/UserService";
+import { GroupService } from "../services/GroupService";
 
 export async function SendWelcomeEmail(
   req: Request
@@ -20,7 +21,7 @@ export async function SendWelcomeEmail(
     return ERR("Bad Token");
   }
 
-  if (result.permission_level !== UserPermission.ADMIN) {
+  if (result.user_type !== UserType.ADMIN) {
     return ERR("Insufficent Permission");
   }
 
@@ -33,7 +34,17 @@ export async function SendWelcomeEmail(
     return ERR("Failed to find user");
   }
 
-  MailService.Send(WelcomeEmailTemplate(user.payload), "Welcome!", email_address);
+  // TODO: Figure out which group they belog to (if multiple)
+  const group = await GroupService.FindByUserEmail(email_address);
+  if (group.error) {
+    return ERR(group.error);
+  }
+
+  if (!group.payload) {
+    return ERR("Failed to find group");
+  }
+
+  MailService.Send(WelcomeEmailTemplate(user.payload, group.payload[0]), "Welcome!", email_address);
 
   return OK(true);
 }

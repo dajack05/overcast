@@ -1,11 +1,11 @@
-import {UserPermission} from '@ovc/common';
 import jwt from 'jsonwebtoken';
 
 import {Users} from '.prisma/client';
+import { UserType } from '@ovc/common';
 
 export interface TokenData {
   id: number
-  permission_level:UserPermission
+  user_type:UserType
 }
 
 export class TokenManager {
@@ -13,7 +13,7 @@ export class TokenManager {
     const token = jwt.sign(
       {
         id: user.id,
-        permission_level:user.permission_level,
+        user_type:user.permission_level,
       } as TokenData,
       process.env.JWT_SECRET);
       console.info(token);

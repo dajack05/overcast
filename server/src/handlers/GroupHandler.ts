@@ -1,5 +1,5 @@
 import { Users } from '.prisma/client';
-import {ERR, Group, Message, OK, UserPermission} from '@ovc/common';
+import {ERR, Group, Message, OK, UserType} from '@ovc/common';
 import {Request} from 'express';
 
 import {GroupService} from '../services/GroupService';
@@ -25,7 +25,7 @@ export async function UpdateGroup(req: Request): Promise<Message<Group>> {
   }
 
   const token_data = TokenManager.Verify(token);
-  if (!token_data || token_data.permission_level !== UserPermission.ADMIN) {
+  if (!token_data || token_data.user_type !== UserType.ADMIN) {
     return ERR('Insufficient Permissons');
   }
 
@@ -64,7 +64,7 @@ export async function CreateGroup(req: Request): Promise<Message<Group>> {
   }
 
   const token_data = TokenManager.Verify(token as string);
-  if (!token_data || token_data.permission_level !== UserPermission.ADMIN) {
+  if (!token_data || token_data.user_type !== UserType.ADMIN) {
     return ERR('Invalid Token');
   }
 
@@ -89,7 +89,7 @@ export async function RemoveGroup(req: Request): Promise<Message<any>> {
   }
 
   const token_data = TokenManager.Verify(token as string);
-  if (!token_data || token_data.permission_level !== UserPermission.ADMIN) {
+  if (!token_data || token_data.user_type !== UserType.ADMIN) {
     return ERR('Invalid Token');
   }
 
