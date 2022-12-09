@@ -10,9 +10,25 @@ const router = useRouter();
 
 const route_name = ref(router.currentRoute.value.name || "home");
 
+let tab_number = ref(0);
+
 watch(router.currentRoute, (newRoute) => {
     if (newRoute.name) {
         route_name.value = newRoute.name.toString();
+        switch (route_name.value) {
+            case "home":
+                tab_number.value = 0;
+                break;
+            case "register":
+                tab_number.value = 1;
+                break;
+            case "register_group":
+                tab_number.value = 2;
+                break;
+            case "email":
+                tab_number.value = 3;
+                break;
+        }
     }
 })
 
@@ -23,6 +39,12 @@ function goHome() {
 function logout() {
     userStore.Logout();
     goHome();
+}
+
+function getOffset(): number {
+    const offset = 38 + 90 * tab_number.value;
+    console.log(offset);
+    return offset;
 }
 </script>
 
@@ -37,25 +59,20 @@ function logout() {
             <ul class="flex justify-center items-baseline">
                 <li class="w-[90px] flex flex-col items-center">
                     <RouterLink to="/">Home</RouterLink>
-                    <span :class="{'opacity-0':route_name != 'home'}"
-                        class="rounded-full transition-opacity w-full min-h-[6px] bg-[#41A6F6]"></span>
                 </li>
                 <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
                     <RouterLink to="register">Club</RouterLink>
-                    <span :class="{'opacity-0':route_name != 'register'}"
-                        class="rounded-full transition-opacity w-full min-h-[6px] bg-[#41A6F6]"></span>
                 </li>
                 <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
                     <RouterLink to="register_group">Aircraft</RouterLink>
-                    <span :class="{'opacity-0':route_name != 'register_group'}"
-                        class="rounded-full transition-opacity w-full min-h-[6px] bg-[#41A6F6]"></span>
                 </li>
                 <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
                     <RouterLink to="email">Reports</RouterLink>
-                    <span :class="{'opacity-0':route_name != 'email'}"
-                        class="rounded-full transition-opacity w-full min-h-[6px] bg-[#41A6F6]"></span>
                 </li>
             </ul>
+            <span
+                :style="{ transform: `translate(${getOffset()}px, 0px)`, transitionDuration: '0.5s', transitionTimingFunction: 'cubic-bezier(.61,-0.23,.3,1.27)' }"
+                class="rounded-full transition-transform w-[25%] min-h-[6px] bg-[#41A6F6]"></span>
         </div>
         <div v-if="loggedIn" class="w-1/4 flex justify-end p-4">
             <!-- Right -->

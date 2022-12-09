@@ -111,6 +111,7 @@ export class UserService {
   }
 
   static async GetAll(): Promise<Message<Users[]>> {
+    console.log("I'm doing the thing!");
     try {
       const users = await prisma.users.findMany();
       if (users) {

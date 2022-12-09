@@ -3,9 +3,6 @@ import { UserService } from '@/services/UserService';
 import { useUserStore } from '@/stores/user';
 import type { User } from '@ovc/common';
 import { onMounted, ref } from 'vue';
-import UserViewer from '../components/User/Viewer.vue';
-import GroupViewer from '../components/Group/Viewer.vue';
-import EmailControlPanel from '@/components/Email/ControlPanel.vue';
 import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();

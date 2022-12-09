@@ -15,11 +15,21 @@ const mail = nodemailer.createTransport({
   },
 });
 
+interface Email {
+  from: string;
+  to: string;
+  subject: string;
+  body: string;
+}
+
+let isRunning = false;
+const emailQueue: Email[] = [];
+
 export class MailService {
   static async Send(
     html: string,
     subject: string,
-    to: string | string[]
+    to: string
   ): Promise<Message<string>> {
     let email = to;
 
@@ -29,18 +39,40 @@ export class MailService {
       subject = `<${to}>${subject}`;
     }
 
-    try {
-      await mail.sendMail({
-        to: email,
-        subject: subject,
-        from: "admin@overcast.com",
-        html: html,
-      });
-    } catch (error) {
-      console.error(error);
-      return ERR(error);
-    }
+    emailQueue.push({
+      to: email,
+      from: "admin@overcast.com",
+      subject: subject,
+      body: html,
+    });
+
+    SendQueue();
 
     return OK();
   }
+}
+
+async function SendQueue() {
+  if (isRunning) {
+    console.log("Already running!");
+    return;
+  }
+
+  isRunning = true;
+  let nextEmail: Email | undefined;
+  while ((nextEmail = emailQueue.shift()) !== undefined) {
+    try {
+      await mail.sendMail({
+        to: nextEmail.to,
+        subject: nextEmail.subject,
+        from: nextEmail.from,
+        html: nextEmail.body,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    console.log(`${emailQueue.length} emails remaining`);
+  }
+  isRunning = false;
 }

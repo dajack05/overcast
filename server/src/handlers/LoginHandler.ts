@@ -21,7 +21,6 @@ export async function LoginHandler(req: Request): Promise<Message<string>> {
       let user = message.payload;
 
       const isPasswordValid = bcrypt.compareSync(password, user.password);
-      console.log(isPasswordValid);
 
       if (isPasswordValid) {
         // Update last login

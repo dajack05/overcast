@@ -86,7 +86,7 @@ export async function SendRawEmail(req: Request): Promise<Message<string>> {
     paragraphs = paragraphs.map((p) => `<p>${p}</p>`);
     const html_text = paragraphs.join("");
 
-    console.log(html_text);
+
 
     // Send text
     message = await MailService.Send(html_text, subject,  user.payload.email);
