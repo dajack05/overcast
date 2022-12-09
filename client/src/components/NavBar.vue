@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user';
-import { computed } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
 const loggedIn = computed(() => userStore.isLoggedIn());
 const isAdmin = computed(() => userStore.isAdmin());
 const router = useRouter();
+
+const route_name = ref(router.currentRoute.value.name || "home");
+
+watch(router.currentRoute, (newRoute) => {
+    if (newRoute.name) {
+        route_name.value = newRoute.name.toString();
+    }
+})
 
 function goHome() {
     router.push("/");
@@ -19,33 +27,37 @@ function logout() {
 </script>
 
 <template>
-    <nav class="w-full p-2 px-8 flex bg-slate-100 shadow-md mb-4">
-        <div class="w-1/4">
+    <nav class="w-full px-8 flex bg-[#566C86] text-[#F4F4F4] shadow-md mb-4">
+        <div class="w-1/4 p-4">
             <!-- Left -->
-            <p class="text-3xl font-bold font-serif cursor-pointer w-fit hover:underline" @click="goHome">Overcast</p>
-            <p class="italic text-sm">v0.1.0</p>
+            <p class="text-3xl font-bold cursor-pointer w-fit hover:underline" @click="goHome">Overcast</p>
         </div>
-        <div v-if="loggedIn" class="w-1/2 flex flex-col justify-center">
+        <div v-if="loggedIn" class="w-1/2 flex flex-col justify-end m-0">
             <!-- Center -->
-            <p class="text-2xl text-center">Welcome {{ userStore.user.first_name }}</p>
             <ul class="flex justify-center items-baseline">
-                <li class="mr-6">
-                    <RouterLink to="/" class="text-blue-500 hover:text-blue-800">Home</RouterLink>
+                <li class="w-[90px] flex flex-col items-center">
+                    <RouterLink to="/">Home</RouterLink>
+                    <span :class="{'opacity-0':route_name != 'home'}"
+                        class="rounded-full transition-opacity w-full min-h-[6px] bg-[#41A6F6]"></span>
                 </li>
-                <li v-if="isAdmin" class="mr-6">
-                    <RouterLink to="register" class="text-blue-500 hover:text-blue-800">Register User</RouterLink>
+                <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
+                    <RouterLink to="register">Club</RouterLink>
+                    <span :class="{'opacity-0':route_name != 'register'}"
+                        class="rounded-full transition-opacity w-full min-h-[6px] bg-[#41A6F6]"></span>
                 </li>
-                <li v-if="isAdmin" class="mr-6">
-                    <RouterLink to="register_group" class="text-blue-500 hover:text-blue-800">Register Group
-                    </RouterLink>
+                <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
+                    <RouterLink to="register_group">Aircraft</RouterLink>
+                    <span :class="{'opacity-0':route_name != 'register_group'}"
+                        class="rounded-full transition-opacity w-full min-h-[6px] bg-[#41A6F6]"></span>
                 </li>
-                <li v-if="isAdmin" class="mr-6">
-                    <RouterLink to="email" class="text-blue-500 hover:text-blue-800">Email
-                    </RouterLink>
+                <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
+                    <RouterLink to="email">Reports</RouterLink>
+                    <span :class="{'opacity-0':route_name != 'email'}"
+                        class="rounded-full transition-opacity w-full min-h-[6px] bg-[#41A6F6]"></span>
                 </li>
             </ul>
         </div>
-        <div v-if="loggedIn" class="w-1/4 flex justify-end">
+        <div v-if="loggedIn" class="w-1/4 flex justify-end p-4">
             <!-- Right -->
             <div>
                 <button @click="logout" class="btn danger">Logout</button>
