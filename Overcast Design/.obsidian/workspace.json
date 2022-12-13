@@ -1,0 +1,106 @@
+{
+  "main": {
+    "id": "703c94920f56f9d5",
+    "type": "split",
+    "children": [
+      {
+        "id": "2a5167c5779efd8c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a863a89127940eb2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Systems/Currency.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e4f35489b365c53f",
+    "type": "split",
+    "children": [
+      {
+        "id": "70775fce9f85654a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2ea9a01769bcfc27",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "080f3b8ec09af9f1",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#standard",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "6f9162dbea5c27c6",
+    "type": "split",
+    "children": [
+      {
+        "id": "7466030591d6ff21",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2c7b88a7032670d0",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Systems/Currency.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "a863a89127940eb2",
+  "lastOpenFiles": [
+    "Systems/Index.md",
+    "Currency/Standard.md",
+    "Systems/Currency.md",
+    "Index.md",
+    "Systems.md"
+  ]
+}

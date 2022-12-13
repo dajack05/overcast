@@ -71,7 +71,7 @@ function getOffset(): number {
                 </li>
             </ul>
             <span
-                :style="{ transform: `translate(${getOffset()}px, 0px)`, transitionDuration: '0.5s', transitionTimingFunction: 'cubic-bezier(.61,-0.23,.3,1.27)' }"
+                :style="{ transform: `translate(${getOffset()}px, 0px)`, transitionDuration: '0.5s'}"
                 class="rounded-full transition-transform w-[25%] min-h-[6px] bg-[#41A6F6]"></span>
         </div>
         <div v-if="loggedIn" class="w-1/4 flex justify-end p-4">
