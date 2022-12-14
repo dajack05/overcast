@@ -19,11 +19,6 @@ const router = createRouter({
       name: 'club',
       component: () => import('../views/ClubView.vue')
     },
-    // {
-    //   path: '/Aircraft',
-    //   name: 'aircraft',
-    //   component: () => import('../views/AircraftView.vue')
-    // },
     {
       path: '/reports',
       name: 'reports',
