@@ -2,35 +2,14 @@
 import { useUserStore } from '@/stores/user';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import NavBarItem from "@/components/NavBarItem.vue"
 
 const userStore = useUserStore();
 const loggedIn = computed(() => userStore.isLoggedIn());
 const isAdmin = computed(() => userStore.isAdmin());
 const router = useRouter();
 
-const route_name = ref(router.currentRoute.value.name || "home");
-
-let tab_number = ref(0);
-
-watch(router.currentRoute, (newRoute) => {
-    if (newRoute.name) {
-        route_name.value = newRoute.name.toString();
-        switch (route_name.value) {
-            case "home":
-                tab_number.value = 0;
-                break;
-            case "register":
-                tab_number.value = 1;
-                break;
-            case "register_group":
-                tab_number.value = 2;
-                break;
-            case "email":
-                tab_number.value = 3;
-                break;
-        }
-    }
-})
+const route_name = computed(() => router.currentRoute.value.name || "home");
 
 function goHome() {
     router.push("/");
@@ -39,12 +18,6 @@ function goHome() {
 function logout() {
     userStore.Logout();
     goHome();
-}
-
-function getOffset(): number {
-    const offset = 38 + 90 * tab_number.value;
-    console.log(offset);
-    return offset;
 }
 </script>
 
@@ -56,23 +29,11 @@ function getOffset(): number {
         </div>
         <div v-if="loggedIn" class="w-1/2 flex flex-col justify-end m-0">
             <!-- Center -->
-            <ul class="flex justify-center items-baseline">
-                <li class="w-[90px] flex flex-col items-center">
-                    <RouterLink to="/">Home</RouterLink>
-                </li>
-                <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
-                    <RouterLink to="register">Club</RouterLink>
-                </li>
-                <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
-                    <RouterLink to="register_group">Aircraft</RouterLink>
-                </li>
-                <li v-if="isAdmin" class="w-[90px] flex flex-col items-center">
-                    <RouterLink to="email">Reports</RouterLink>
-                </li>
-            </ul>
-            <span
-                :style="{ transform: `translate(${getOffset()}px, 0px)`, transitionDuration: '0.5s'}"
-                class="rounded-full transition-transform w-[25%] min-h-[6px] bg-[#41A6F6]"></span>
+            <div class="flex justify-center items-baseline">
+                <NavBarItem title="Home" link="/" />
+                <NavBarItem title="Club" link="/club" />
+                <NavBarItem title="Reports" link="/reports" />
+            </div>
         </div>
         <div v-if="loggedIn" class="w-1/4 flex justify-end p-4">
             <!-- Right -->

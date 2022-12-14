@@ -15,19 +15,19 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue')
     },
     {
-      path: '/register',
-      name: 'register',
-      component: () => import('../views/RegisterUserView.vue')
+      path: '/club',
+      name: 'club',
+      component: () => import('../views/ClubView.vue')
     },
+    // {
+    //   path: '/Aircraft',
+    //   name: 'aircraft',
+    //   component: () => import('../views/AircraftView.vue')
+    // },
     {
-      path: '/register_group',
-      name: 'register_group',
-      component: () => import('../views/RegisterGroup.vue')
-    },
-    {
-      path: '/email',
-      name: 'email',
-      component: () => import('../views/EmailView.vue')
+      path: '/reports',
+      name: 'reports',
+      component: () => import('../views/ReportsView.vue')
     },
   ]
 })
