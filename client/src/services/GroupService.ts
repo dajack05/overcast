@@ -32,6 +32,23 @@ export class GroupService {
     return message.payload;
   }
 
+  static async GetByEmail(email:string): Promise<Group[]> {
+    const result = await axios.get(
+        `${SERVER}/group`, {params: {token: useUserStore().token, email:email}});
+    const message = result.data as Message<Group[]>;
+    if (message.error) {
+      console.error(message.error);
+      return [];
+    }
+
+    if (!message.payload) {
+      console.error('Payload empty');
+      return [];
+    }
+
+    return message.payload;
+  }
+
   static async Update(group: Group): Promise<Group|string> {
     const result = await axios.post(`${SERVER}/group`, {
       id: group.id,
